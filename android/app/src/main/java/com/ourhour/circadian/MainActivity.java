@@ -39,15 +39,20 @@ public class MainActivity extends AppCompatActivity {
         setupWebView();
 
         String targetUrl = getString(R.string.app_url);
+        if (!targetUrl.contains("?")) {
+            targetUrl += "?mode=app";
+        } else {
+            targetUrl += "&mode=app";
+        }
         webView.loadUrl(targetUrl);
     }
 
     private void setupSwipeRefresh() {
         swipeRefresh.setColorSchemeColors(
-            getColor(R.color.solar_gold),
+            getColor(R.color.solar_amber),
             getColor(R.color.night_indigo)
         );
-        swipeRefresh.setProgressBackgroundColorSchemeColor(getColor(R.color.bg_dark));
+        swipeRefresh.setProgressBackgroundColorSchemeColor(getColor(R.color.white));
         swipeRefresh.setOnRefreshListener(() -> webView.reload());
     }
 
@@ -62,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
         settings.setDisplayZoomControls(false);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         settings.setMediaPlaybackRequiresUserGesture(false);
+        
+        String customUA = settings.getUserAgentString() + " OurHourApp/1.0.0";
+        settings.setUserAgentString(customUA);
 
         // Render black background while loading
         webView.setBackgroundColor(getColor(R.color.black));

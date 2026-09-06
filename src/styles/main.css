@@ -1049,3 +1049,152 @@ footer {
     text-align: center;
   }
 }
+
+/* ==========================================================================
+   Smartphone Viewport Optimization (< 480px) — Zero Horizontal Scroll
+   ========================================================================== */
+@media (max-width: 480px) {
+  html, body {
+    padding: 12px 6px !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
+
+  .watch-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 4px !important;
+  }
+
+  .top-install-banner {
+    max-width: 100% !important;
+    margin-bottom: 12px !important;
+  }
+
+  .btn-app-install-top {
+    padding: 6px 12px !important;
+    font-size: 0.76rem !important;
+  }
+
+  .watch-chassis {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 36px !important;
+    padding: 8px !important;
+    border-width: 2px !important;
+  }
+
+  .watch-screen {
+    border-radius: 28px !important;
+    padding: 12px 10px 16px !important;
+    gap: 10px !important;
+  }
+
+  .watch-pusher {
+    padding: 4px 8px !important;
+    font-size: 0.65rem !important;
+  }
+
+  .pusher-top-right {
+    top: 4px !important;
+    right: 4px !important;
+  }
+
+  .pusher-bottom-left {
+    bottom: 28px !important;
+    left: 4px !important;
+  }
+
+  .pusher-bottom-right {
+    bottom: 28px !important;
+    right: 4px !important;
+  }
+
+  .complications-bar {
+    gap: 4px !important;
+  }
+
+  .pill {
+    padding: 3px 6px !important;
+    font-size: 0.68rem !important;
+  }
+
+  .pill select, .pill input {
+    font-size: 0.68rem !important;
+  }
+
+  .pill input[type="date"] {
+    font-size: 0.64rem !important;
+    width: 82px !important;
+  }
+
+  .virtual-digits {
+    font-size: clamp(1.85rem, 8vw, 2.5rem) !important;
+  }
+
+  .civil-clock-strip {
+    padding: 6px 10px !important;
+  }
+
+  .civil-label {
+    font-size: 0.64rem !important;
+  }
+
+  .civil-digits {
+    font-size: 0.98rem !important;
+  }
+
+  .civil-edit-input {
+    width: 102px !important;
+    min-width: 90px !important;
+    font-size: 0.74rem !important;
+    padding: 2px 4px !important;
+  }
+
+  .ephemeris-matrix {
+    gap: 4px !important;
+  }
+
+  .eph-box {
+    padding: 5px 2px !important;
+    border-radius: 10px !important;
+  }
+
+  .eph-label {
+    font-size: 0.58rem !important;
+  }
+
+  .eph-val {
+    font-size: 0.78rem !important;
+  }
+
+  .landmark-buttons {
+    gap: 3px !important;
+  }
+
+  .btn-snap {
+    padding: 6px 1px !important;
+    font-size: 0.62rem !important;
+    border-radius: 8px !important;
+  }
+}
+
+/* ==========================================================================
+   Standalone Mode (Installed PWA / Android APK / Standalone App)
+   Hides all install banners, buttons, pushers, and modals when app is installed.
+   ========================================================================== */
+@media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
+  .top-install-banner,
+  #btn-install-pusher,
+  #btn-open-install-modal,
+  #install-modal {
+    display: none !important;
+  }
+}
+
+.app-standalone .top-install-banner,
+.app-standalone #btn-install-pusher,
+.app-standalone #btn-open-install-modal,
+.app-standalone #install-modal {
+  display: none !important;
+}

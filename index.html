@@ -879,9 +879,34 @@
         }, 1000);
       };
 
+      // Standalone & Installed Mode Detector
+      function checkStandaloneMode() {
+        var isStandalone = (
+          window.matchMedia('(display-mode: standalone)').matches ||
+          window.matchMedia('(display-mode: fullscreen)').matches ||
+          window.matchMedia('(display-mode: minimal-ui)').matches ||
+          window.navigator.standalone === true ||
+          document.referrer.includes('android-app://') ||
+          window.location.search.includes('mode=app') ||
+          navigator.userAgent.includes('OurHourApp')
+        );
+        if (isStandalone) {
+          document.documentElement.classList.add('app-standalone');
+          document.body.classList.add('app-standalone');
+          var topBanner = document.querySelector('.top-install-banner');
+          var installPusher = document.getElementById('btn-install-pusher');
+          var modal = document.getElementById('install-modal');
+          if (topBanner) topBanner.style.display = 'none';
+          if (installPusher) installPusher.style.display = 'none';
+          if (modal) modal.style.display = 'none';
+        }
+        return isStandalone;
+      }
+
       // Service Worker & PWA Install Manager
       var deferredPrompt = null;
       window.addEventListener('beforeinstallprompt', function(e) {
+        if (checkStandaloneMode()) return;
         e.preventDefault();
         deferredPrompt = e;
         var pwaBtn = document.getElementById('btn-trigger-pwa-install');
@@ -891,6 +916,8 @@
       });
 
       function setupAppInstallModal() {
+        if (checkStandaloneMode()) return;
+
         var modal = document.getElementById('install-modal');
         var openBtn1 = document.getElementById('btn-open-install-modal');
         var openBtn2 = document.getElementById('btn-install-pusher');
@@ -929,6 +956,7 @@
               if (choice.outcome === 'accepted') {
                 console.log('PWA installed successfully');
                 closeModal();
+                checkStandaloneMode();
               }
               deferredPrompt = null;
             } else {
@@ -953,6 +981,7 @@
 
       function launch() {
         try {
+          checkStandaloneMode();
           var app = new AppController();
           app.init();
           window.__ourHourAppInstance = app;
