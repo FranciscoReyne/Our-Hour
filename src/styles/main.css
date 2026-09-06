@@ -11,7 +11,7 @@
   --bg-card: #FFFFFF;
   --bg-subtle: #F1F5F9;
   --bg-input: #FFFFFF;
-  
+
   /* Chassis & Hardware */
   --chassis-ceramic: #FFFFFF;
   --chassis-inner: #FFFFFF;
@@ -58,7 +58,8 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html,
+body {
   color-scheme: light;
   background-color: var(--bg-app) !important;
   color: var(--text-primary) !important;
@@ -71,7 +72,7 @@ html, body {
   justify-content: center;
   font-family: var(--font-ui);
   overflow-x: hidden;
-  background-image: 
+  background-image:
     radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 50%),
     radial-gradient(circle at 50% 100%, rgba(79, 70, 229, 0.05) 0%, transparent 50%);
   background-attachment: fixed;
@@ -217,8 +218,17 @@ html, body {
 }
 
 @keyframes pulse-led {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
 }
 
 /* Physical Ceramic Watch Chassis */
@@ -287,7 +297,8 @@ html, body {
   background: #E2E8F0;
 }
 
-.pill select, .pill input {
+.pill select,
+.pill input {
   color-scheme: light;
   background: transparent;
   border: none;
@@ -503,10 +514,21 @@ html, body {
   color: var(--text-primary);
 }
 
-#stat-sunrise { color: var(--solar-amber); }
-#stat-noon { color: var(--solar-gold); }
-#stat-sunset { color: var(--solar-orange); }
-#stat-daylength { color: var(--night-cyan); }
+#stat-sunrise {
+  color: var(--solar-amber);
+}
+
+#stat-noon {
+  color: var(--solar-gold);
+}
+
+#stat-sunset {
+  color: var(--solar-orange);
+}
+
+#stat-daylength {
+  color: var(--night-cyan);
+}
 
 /* ==========================================================================
    Zone 5: Tactile 24-Hour Bezel Scrubber & Landmark Segmented Controls
@@ -1040,10 +1062,12 @@ footer {
     gap: 14px;
     text-align: center;
   }
+
   .header-controls {
     flex-wrap: wrap;
     justify-content: center;
   }
+
   .footer-content {
     flex-direction: column;
     text-align: center;
@@ -1054,7 +1078,9 @@ footer {
    Smartphone Viewport Optimization (< 480px) — Zero Horizontal Scroll
    ========================================================================== */
 @media (max-width: 480px) {
-  html, body {
+
+  html,
+  body {
     padding: 12px 6px !important;
     overflow-x: hidden !important;
     width: 100% !important;
@@ -1119,7 +1145,8 @@ footer {
     font-size: 0.68rem !important;
   }
 
-  .pill select, .pill input {
+  .pill select,
+  .pill input {
     font-size: 0.68rem !important;
   }
 
@@ -1183,7 +1210,10 @@ footer {
    Standalone Mode (Installed PWA / Android APK / Standalone App)
    Hides all install banners, buttons, pushers, and modals when app is installed.
    ========================================================================== */
-@media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
+@media (display-mode: standalone),
+(display-mode: fullscreen),
+(display-mode: minimal-ui) {
+
   .top-install-banner,
   #btn-install-pusher,
   #btn-open-install-modal,
