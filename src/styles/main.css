@@ -260,7 +260,7 @@ html, body {
 }
 
 .active-context-pill {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
   color: var(--text-secondary);
   background: rgba(255, 255, 255, 0.05);
@@ -268,11 +268,14 @@ html, body {
   border-radius: 12px;
   padding: 3px 10px;
   margin: 3px 0 4px;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   pointer-events: auto;
+  white-space: nowrap;
+  max-width: 95%;
 }
 
 .active-context-pill span {
@@ -299,13 +302,13 @@ html, body {
   color: var(--text-secondary);
   letter-spacing: 0.5px;
   margin-top: 4px;
+  text-transform: uppercase;
 }
 
 .dilation-pill {
-  margin-top: 6px;
-  font-size: 0.7rem;
-  font-weight: 700;
   font-family: var(--font-digits);
+  font-size: 0.72rem;
+  font-weight: 700;
   padding: 3px 10px;
   border-radius: 20px;
   background: rgba(245, 158, 11, 0.12);
@@ -347,10 +350,11 @@ html, body {
   font-family: var(--font-digits);
   font-size: 0.85rem;
   font-weight: 700;
-  padding: 4px 8px;
+  padding: 4px 6px;
   outline: none;
   cursor: pointer;
-  width: 110px;
+  width: 124px;
+  min-width: 124px;
 }
 
 .civil-edit-input::-webkit-calendar-picker-indicator {
@@ -823,7 +827,7 @@ footer {
    ========================================================================== */
 .pusher-bottom-right {
   bottom: 48px;
-  right: -52px;
+  right: -8px;
   background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
   border-color: rgba(245, 158, 11, 0.35);
   color: var(--solar-amber);
