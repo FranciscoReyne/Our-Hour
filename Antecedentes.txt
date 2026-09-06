@@ -1,0 +1,1277 @@
+Quiero desarrollar una aplicación de gestión del tiempo basada en un concepto de **Tiempo Virtual Normalizado** o **Normalized Time**.
+
+Necesito que actúes como **arquitecto de software, desarrollador full-stack, especialista en sistemas de tiempo/calendarios y diseñador de producto**, y que me ayudes a diseñar y desarrollar la aplicación paso a paso.
+
+La prioridad absoluta del proyecto es construir correctamente el **motor de tiempo virtual**, porque será la base de todas las funcionalidades posteriores.
+
+---
+
+# 1. CONCEPTO GENERAL
+
+La aplicación debe crear una segunda escala temporal llamada:
+
+**Tiempo Virtual**
+
+Esta escala será independiente del reloj civil real del usuario.
+
+El propósito es eliminar las diferencias que existen en la duración de la luz y oscuridad según:
+
+* fecha
+* estación
+* latitud
+* longitud
+* ubicación geográfica
+
+En el mundo real, un día puede tener, por ejemplo:
+
+* 8 horas de luz y 16 de oscuridad
+* 10 horas de luz y 14 de oscuridad
+* 12 horas de luz y 12 de oscuridad
+* 16 horas de luz y 8 de oscuridad
+* 20 horas de luz y 4 de oscuridad
+
+Quiero que todos esos días tengan exactamente la misma estructura temporal virtual:
+
+**24 horas virtuales**
+
+divididas en:
+
+**12 horas virtuales de luz**
+
+y
+
+**12 horas virtuales de oscuridad.**
+
+---
+
+# 2. REGLA FUNDAMENTAL DEL TIEMPO VIRTUAL
+
+El sistema debe utilizar dos relojes simultáneamente:
+
+### Tiempo civil real
+
+Es la hora convencional:
+
+* hora del teléfono/computador
+* timezone
+* fecha
+* horario de verano/invierno cuando corresponda
+
+Ejemplo:
+
+**07:30**
+
+### Tiempo virtual
+
+Es la hora normalizada utilizada por la aplicación.
+
+Ejemplo:
+
+**06:00 virtual**
+
+Ambos relojes pueden mostrar horas diferentes.
+
+Por ejemplo:
+
+**07:30 tiempo real = 06:00 tiempo virtual**
+
+si en ese lugar y fecha el amanecer real ocurre a las 07:30.
+
+IMPORTANTE:
+
+El tiempo virtual **NO debe modificar el reloj del dispositivo**.
+
+NO debe modificar el timezone.
+
+NO debe reemplazar el tiempo civil del sistema operativo.
+
+Debe ser una escala temporal adicional utilizada exclusivamente por la aplicación.
+
+---
+
+# 3. ANCLAS DEL RELOJ VIRTUAL
+
+El reloj virtual tiene cuatro puntos fundamentales:
+
+**00:00 virtual = punto medio de la noche**
+
+**06:00 virtual = amanecer**
+
+**12:00 virtual = punto medio del período de luz**
+
+**18:00 virtual = atardecer**
+
+Por lo tanto:
+
+### Luz virtual
+
+**06:00 → 18:00**
+
+Siempre representa exactamente 12 horas virtuales.
+
+### Oscuridad virtual
+
+**18:00 → 06:00**
+
+Siempre representa exactamente 12 horas virtuales.
+
+MUY IMPORTANTE:
+
+06:00 y 18:00 son **anclas del tiempo virtual**, no horarios civiles reales.
+
+El amanecer real podría ocurrir a las 04:30, 06:30, 07:30, 09:00, etc.
+
+Pero en el reloj virtual siempre será:
+
+**Amanecer real → 06:00 virtual**
+
+Y:
+
+**Atardecer real → 18:00 virtual**
+
+---
+
+# 4. TRANSFORMACIÓN DEL TIEMPO REAL A TIEMPO VIRTUAL
+
+El sistema debe calcular la posición de cada instante real dentro del período de luz u oscuridad.
+
+## Período de luz
+
+Sea:
+
+* sunrise = amanecer real
+* sunset = atardecer real
+* daylightDuration = sunset - sunrise
+
+Entonces:
+
+**sunrise → 06:00 virtual**
+
+**sunset → 18:00 virtual**
+
+La transformación dentro de ese intervalo debe ser lineal.
+
+Conceptualmente:
+
+virtualTime = 06:00 + ((realTime - sunrise) / daylightDuration) × 12 horas
+
+Por ejemplo:
+
+Amanecer real: 07:30
+
+Atardecer real: 17:30
+
+Duración real de luz:
+
+10 horas
+
+Por lo tanto:
+
+10 horas reales → 12 horas virtuales.
+
+Factor de expansión:
+
+12 / 10 = 1,2
+
+Entonces cada hora real de luz equivale a 1,2 horas virtuales.
+
+---
+
+# 5. EJEMPLO DE UN DÍA LARGO
+
+Supongamos:
+
+Amanecer real: 06:00
+
+Atardecer real: 20:00
+
+Duración real de luz:
+
+14 horas.
+
+Entonces:
+
+14 horas reales → 12 horas virtuales.
+
+Factor:
+
+12 / 14 = 0,857142...
+
+Por lo tanto el tiempo virtual avanza más lentamente que el tiempo real durante la luz.
+
+La correspondencia debe ser:
+
+06:00 real → 06:00 virtual
+
+20:00 real → 18:00 virtual
+
+---
+
+# 6. TRANSFORMACIÓN DE LA NOCHE
+
+La noche también debe normalizarse.
+
+Sea:
+
+* sunset = atardecer real
+* nextSunrise = siguiente amanecer real
+* nightDuration = nextSunrise - sunset
+
+Entonces:
+
+**sunset → 18:00 virtual**
+
+**nextSunrise → 06:00 virtual del día siguiente**
+
+La transformación dentro del intervalo nocturno debe ser lineal.
+
+Por ejemplo:
+
+Si la noche real dura 14 horas:
+
+14 horas reales → 12 horas virtuales.
+
+Si la noche real dura 8 horas:
+
+8 horas reales → 12 horas virtuales.
+
+Por lo tanto el tiempo virtual también puede acelerarse o desacelerarse durante la noche.
+
+---
+
+# 7. NO HACER UNA TRANSFORMACIÓN LINEAL SIMPLE DE 24 HORAS
+
+Esto es extremadamente importante.
+
+NO asumir:
+
+00:00 real → 00:00 virtual
+
+12:00 real → 12:00 virtual
+
+24:00 real → 24:00 virtual
+
+La transformación debe tener dos segmentos:
+
+### Segmento 1: luz
+
+Amanecer real → Atardecer real
+
+se transforma en:
+
+06:00 virtual → 18:00 virtual
+
+### Segmento 2: oscuridad
+
+Atardecer real → Siguiente amanecer real
+
+se transforma en:
+
+18:00 virtual → 06:00 virtual del siguiente día.
+
+Por lo tanto el sistema es una transformación **piecewise / por tramos**.
+
+El agente debe estudiar cuidadosamente la continuidad en los puntos de transición.
+
+---
+
+# 8. FUNCIÓN INVERSA
+
+El motor debe ser bidireccional.
+
+Debe poder hacer:
+
+**Tiempo real → Tiempo virtual**
+
+y también:
+
+**Tiempo virtual → Tiempo real**
+
+Por ejemplo:
+
+Usuario programa:
+
+**08:00 virtual**
+
+El sistema debe calcular automáticamente a qué hora civil real corresponde según:
+
+* fecha
+* ubicación
+* timezone
+* sunrise
+* sunset
+
+Esto permitirá que las tareas y eventos se programen en tiempo virtual pero puedan ejecutarse en el mundo real.
+
+---
+
+# 9. EJEMPLO PRÁCTICO
+
+Supongamos un día:
+
+Amanecer real: 07:30
+
+Atardecer real: 17:30
+
+Entonces:
+
+07:30 real → 06:00 virtual
+
+17:30 real → 18:00 virtual
+
+Una tarea:
+
+**Trabajo profundo**
+08:00–10:00 virtual
+
+debe convertirse automáticamente al horario civil correspondiente.
+
+La misma tarea:
+
+**Trabajo profundo**
+08:00–10:00 virtual
+
+en otro día con:
+
+Amanecer real: 06:00
+
+Atardecer real: 20:00
+
+tendrá un horario civil real diferente.
+
+Pero seguirá siendo:
+
+**08:00–10:00 virtual**
+
+Esto es precisamente lo que quiero conseguir.
+
+---
+
+# 10. SIGNIFICADO DEL TIEMPO VIRTUAL
+
+El tiempo virtual representa la **posición relativa del usuario dentro del ciclo diario de luz y oscuridad**.
+
+Por ejemplo:
+
+08:00 virtual significa:
+
+"2 horas virtuales después del amanecer."
+
+12:00 virtual significa:
+
+"Mitad del período de luz."
+
+15:00 virtual significa:
+
+"9 horas virtuales después del inicio del período de luz."
+
+20:00 virtual significa:
+
+"2 horas virtuales después del atardecer."
+
+Esto permite que un mismo horario virtual tenga un significado relativo similar independientemente de la estación o ubicación.
+
+---
+
+# 11. UBICACIÓN
+
+La aplicación debe determinar automáticamente la ubicación del usuario mediante:
+
+* GPS/geolocalización
+* ubicación introducida manualmente
+* selección de ciudad
+* latitud/longitud
+
+El motor debe trabajar principalmente con:
+
+* latitud
+* longitud
+* fecha
+* timezone
+
+A partir de estos datos debe obtener los eventos solares.
+
+Como mínimo:
+
+* sunrise
+* sunset
+
+Idealmente también considerar:
+
+* civil dawn
+* civil dusk
+* solar noon
+* solar elevation
+
+si estos datos resultan útiles para resolver casos extremos.
+
+No implementar cálculos astronómicos complejos desde cero si existe una librería confiable.
+
+Investigar y recomendar la mejor librería/API disponible para el stack elegido.
+
+---
+
+# 12. CASOS EXTREMOS
+
+Este punto es obligatorio.
+
+La aplicación debe funcionar correctamente en:
+
+* Ecuador
+* ambos hemisferios
+* latitudes altas
+* círculo polar
+* regiones cercanas a los polos
+* días extremadamente largos
+* días extremadamente cortos
+* períodos de 24 horas de luz
+* períodos de 24 horas de oscuridad
+* ausencia de sunrise convencional
+* ausencia de sunset convencional
+
+No asumir que sunrise y sunset siempre existen.
+
+Para regiones polares debe diseñarse una estrategia explícita.
+
+Antes de programar, analizar alternativas como:
+
+* sunrise/sunset astronómico
+* civil dawn/civil dusk
+* posición/elevación solar
+* umbrales de elevación solar
+* definiciones configurables del inicio y término del período de luz
+
+Explicar cuál es la mejor estrategia y por qué.
+
+No aceptar una solución que simplemente produzca errores cuando una API devuelva "no sunrise" o "no sunset".
+
+---
+
+# 13. CAMBIO DE UBICACIÓN
+
+El usuario puede viajar.
+
+Ejemplo:
+
+Lunes:
+
+Santiago, Chile
+
+Martes:
+
+Madrid, España
+
+El sistema debe poder calcular el tiempo virtual de cada día según su ubicación correspondiente.
+
+Diseñar una estrategia para:
+
+* cambios de ubicación
+* cambios de timezone
+* viajes
+* eventos recurrentes
+* tareas existentes
+* tareas futuras
+
+Analizar especialmente qué sucede si el usuario cambia de ubicación durante el mismo día.
+
+Proponer una política clara.
+
+---
+
+# 14. ZONA HORARIA
+
+Diferenciar completamente:
+
+**Tiempo civil**
+
+de:
+
+**Tiempo virtual**
+
+El tiempo civil debe respetar:
+
+* timezone
+* UTC
+* DST / horario de verano
+* cambios históricos de timezone
+
+El tiempo virtual no debe depender directamente del horario civil, sino de los eventos solares calculados para la ubicación y fecha.
+
+---
+
+# 15. CAMBIO DE HORARIO DE VERANO
+
+La aplicación debe funcionar correctamente cuando exista:
+
+* daylight saving time
+* cambios de UTC offset
+* cambios de timezone
+
+Los eventos solares deben calcularse correctamente en tiempo civil local.
+
+El motor virtual debe continuar funcionando independientemente de estos cambios.
+
+---
+
+# 16. MOTOR TEMPORAL
+
+Crear un módulo independiente conceptualmente denominado:
+
+**Normalized Time Engine**
+
+Este debe ser el núcleo de la aplicación.
+
+Debe recibir como entrada:
+
+* fecha
+* timestamp real
+* latitud
+* longitud
+* timezone
+
+Y debe devolver, como mínimo:
+
+* tiempo virtual
+* fase del día
+* porcentaje del período actual transcurrido
+* sunrise real
+* sunset real
+* siguiente sunrise real
+* duración real de luz
+* duración real de oscuridad
+* hora real
+* hora virtual
+
+También debe permitir:
+
+**virtualTime → realTimestamp**
+
+---
+
+# 17. FASE DEL DÍA
+
+El motor debe identificar al menos:
+
+* NIGHT
+* DAY
+
+Idealmente también podría permitir fases más detalladas:
+
+* PRE_DAWN
+* DAY
+* SUNSET
+* NIGHT
+* PRE_DAWN
+
+Pero mantener separada esta lógica del núcleo matemático.
+
+---
+
+# 18. MODELO DE DATOS
+
+Diseñar un modelo de datos adecuado.
+
+Analizar qué debe almacenarse y qué debe calcularse dinámicamente.
+
+Por ejemplo:
+
+### User
+
+* id
+* timezone
+* location
+* preferences
+
+### Location
+
+* latitude
+* longitude
+* timezone
+* name
+
+### SolarDay
+
+* date
+* location
+* sunrise
+* sunset
+* nextSunrise
+* daylightDuration
+* nightDuration
+
+### Task
+
+* id
+* user_id
+* title
+* description
+* virtual_start
+* virtual_end
+* real_start
+* real_end
+* date
+* location
+* status
+
+Sin embargo, NO asumir que este modelo es definitivo.
+
+Determinar qué datos deben ser fuente de verdad y cuáles deben derivarse.
+
+La arquitectura debe evitar inconsistencias.
+
+---
+
+# 19. TAREAS
+
+La aplicación debe permitir crear tareas.
+
+Ejemplo:
+
+**Escribir informe**
+
+08:00–10:00 virtual
+
+El sistema debe mostrar:
+
+**Tiempo virtual:**
+08:00–10:00
+
+**Tiempo real:**
+09:15–11:10
+
+dependiendo de la fecha y ubicación.
+
+---
+
+# 20. BLOQUES DE TRABAJO
+
+El usuario debe poder crear bloques como:
+
+* trabajo profundo
+* estudio
+* reunión
+* descanso
+* ejercicio
+* producción
+* planificación
+* administración
+
+Cada bloque debe poder utilizar tiempo virtual.
+
+Ejemplo:
+
+**Trabajo**
+08:00–12:00
+
+**Almuerzo**
+12:00–13:00
+
+**Trabajo**
+13:00–17:00
+
+---
+
+# 21. HÁBITOS
+
+Permitir hábitos recurrentes.
+
+Ejemplo:
+
+"Ejercicio todos los días a las 07:00 virtuales."
+
+El sistema debe calcular automáticamente la hora real correspondiente cada día.
+
+Esto es importante:
+
+Una recurrencia basada en tiempo virtual debe conservar su posición relativa dentro del día solar.
+
+---
+
+# 22. AGENDA
+
+Construir una agenda/calendario que pueda mostrar simultáneamente:
+
+### Tiempo virtual
+
+06:00
+07:00
+08:00
+09:00
+10:00
+...
+
+### Tiempo real
+
+07:30
+08:20
+09:10
+10:00
+...
+
+La interfaz debe dejar claro que son dos escalas diferentes.
+
+---
+
+# 23. INTERFAZ PRINCIPAL
+
+La pantalla principal debería mostrar algo conceptualmente similar a:
+
+MI DÍA
+
+Tiempo real:
+07:42
+
+Tiempo virtual:
+06:18
+
+Estado:
+☀️ Luz
+
+---
+
+RELOJ VIRTUAL
+
+06:00 ─────────────── 18:00
+
+🌅 Amanecer             🌇 Atardecer
+
+---
+
+08:00
+Trabajo profundo
+
+10:00
+Reunión
+
+12:00
+Almuerzo
+
+---
+
+También mostrar opcionalmente:
+
+Amanecer real: 07:30
+Atardecer real: 17:30
+
+---
+
+# 24. EXPERIENCIA DE USUARIO
+
+La aplicación debe hacer que el usuario pueda pensar principalmente en tiempo virtual.
+
+El usuario no debería tener que calcular:
+
+"Hoy amaneció a las 07:34, entonces mi bloque de 08:00 virtual empieza a las 09:12 reales."
+
+La aplicación debe realizar automáticamente esa conversión.
+
+El usuario trabaja con:
+
+**08:00 virtual**
+
+y el sistema se encarga de determinar:
+
+**qué hora real corresponde.**
+
+---
+
+# 25. PRODUCTIVIDAD
+
+La aplicación debe poder evolucionar posteriormente hacia:
+
+* gestión de tareas
+* productividad personal
+* time blocking
+* hábitos
+* objetivos
+* planificación diaria
+* planificación semanal
+* planificación mensual
+* seguimiento del tiempo
+* estadísticas
+* métricas de productividad
+
+No implementar todo esto en el MVP.
+
+Diseñar la arquitectura para que pueda incorporarse posteriormente.
+
+---
+
+# 26. RRHH Y EMPRESAS
+
+A largo plazo quiero que la aplicación pueda utilizarse para:
+
+* empresas
+* trabajadores
+* equipos
+* turnos
+* planificación laboral
+* gestión de RRHH
+* asignación de tareas
+* planificación de producción
+* control de jornadas
+* gestión de recursos
+
+Ejemplo:
+
+Una empresa podría definir:
+
+**Jornada virtual: 08:00–16:00**
+
+El sistema convertiría automáticamente esa jornada a las horas civiles reales correspondientes según:
+
+* fecha
+* ubicación
+* reglas de la empresa
+
+Esto podría permitir modelos de trabajo adaptados a la variación solar.
+
+Sin embargo, distinguir claramente entre:
+
+**planificación/productividad**
+
+y
+
+**cumplimiento legal de jornada laboral**.
+
+No asumir que el tiempo virtual reemplaza las obligaciones legales de registro de jornada.
+
+---
+
+# 27. MULTIUSUARIO
+
+La arquitectura debe permitir posteriormente:
+
+* usuarios individuales
+* equipos
+* organizaciones
+* administradores
+* trabajadores
+* roles
+* permisos
+
+Por ejemplo:
+
+Una empresa puede tener usuarios en diferentes ubicaciones geográficas.
+
+Cada usuario podría tener su propio:
+
+* timezone
+* ubicación
+* tiempo virtual
+
+Mientras la organización mantiene una estructura común de planificación.
+
+---
+
+# 28. MVP
+
+El primer MVP debe ser deliberadamente pequeño.
+
+Implementar solamente:
+
+1. Registro/login.
+2. Perfil del usuario.
+3. Ubicación.
+4. Geolocalización.
+5. Fecha.
+6. Cálculo de sunrise/sunset.
+7. Normalized Time Engine.
+8. Reloj virtual.
+9. Conversión real → virtual.
+10. Conversión virtual → real.
+11. Calendario diario.
+12. Creación de tareas.
+13. Bloques de tiempo.
+14. Visualización simultánea de tiempo real y virtual.
+
+No desarrollar todavía:
+
+* RRHH completo
+* nómina
+* gestión empresarial compleja
+* chat
+* facturación
+* funcionalidades sociales
+* IA avanzada
+
+Primero demostrar que el concepto temporal funciona.
+
+---
+
+# 29. PRUEBAS MATEMÁTICAS
+
+Crear pruebas automatizadas para comprobar:
+
+1. Amanecer real = 06:00 virtual.
+
+2. Atardecer real = 18:00 virtual.
+
+3. Siguiente amanecer = 06:00 virtual del siguiente día.
+
+4. El período de luz siempre representa 12 horas virtuales.
+
+5. El período de oscuridad siempre representa 12 horas virtuales.
+
+6. El día completo siempre representa 24 horas virtuales.
+
+7. real → virtual → real conserva el timestamp original dentro de una tolerancia pequeña.
+
+8. virtual → real → virtual conserva la hora virtual original.
+
+9. Funciona en ambos hemisferios.
+
+10. Funciona en distintas estaciones.
+
+11. Funciona en distintas zonas horarias.
+
+12. Funciona durante DST.
+
+13. Funciona cerca de los polos.
+
+14. Maneja correctamente la ausencia de sunrise/sunset convencional.
+
+Crear tests específicos para:
+
+* Santiago
+* Nueva York
+* Londres
+* Madrid
+* una ubicación ecuatorial
+* una ubicación cercana al círculo polar
+* una ubicación polar
+
+---
+
+# 30. PRECISIÓN
+
+Definir claramente qué significa:
+
+* sunrise
+* sunset
+* daylight
+* darkness
+
+No asumir que "luz" significa simplemente que el Sol está geométricamente sobre el horizonte.
+
+Analizar si para la aplicación es mejor utilizar:
+
+* sunrise/sunset estándar
+* elevación solar
+* civil twilight
+* otro criterio
+
+La decisión debe justificarse según el propósito de la aplicación.
+
+---
+
+# 31. ARQUITECTURA
+
+Antes de comenzar a programar, proponer una arquitectura completa.
+
+Separar como mínimo:
+
+### Time Engine
+
+Responsable de:
+
+* transformación real → virtual
+* transformación virtual → real
+
+### Solar Engine
+
+Responsable de:
+
+* sunrise
+* sunset
+* eventos solares
+
+### Location Service
+
+Responsable de:
+
+* GPS
+* latitud
+* longitud
+* timezone
+
+### Calendar Engine
+
+Responsable de:
+
+* días
+* eventos
+* recurrencias
+
+### Task Engine
+
+Responsable de:
+
+* tareas
+* bloques
+* estados
+
+### Habit Engine
+
+Responsable de:
+
+* hábitos
+* recurrencias
+
+### User System
+
+Responsable de:
+
+* usuarios
+* preferencias
+* ubicación
+
+Estos módulos deben estar desacoplados.
+
+---
+
+# 32. STACK TECNOLÓGICO
+
+Antes de elegir tecnologías definitivas, analizar:
+
+* frontend
+* backend
+* base de datos
+* autenticación
+* hosting
+* APIs solares
+* geolocalización
+* timezone database
+
+Priorizar:
+
+* bajo costo
+* facilidad de desarrollo
+* escalabilidad
+* buena documentación
+* mantenimiento sencillo
+* posibilidad de utilizar servicios gratuitos o económicos durante el MVP
+
+Si una tecnología es innecesariamente compleja o cara para el MVP, proponer una alternativa.
+
+---
+
+# 33. SEGURIDAD Y PRIVACIDAD
+
+La ubicación del usuario puede ser información sensible.
+
+Diseñar el sistema minimizando el almacenamiento innecesario de ubicación precisa.
+
+Analizar:
+
+* si se necesita almacenar coordenadas exactas
+* si basta con una ciudad
+* si la ubicación puede calcularse temporalmente
+* permisos de geolocalización
+* protección de datos
+* separación entre ubicación actual y ubicación histórica
+
+No almacenar más información de ubicación de la necesaria.
+
+---
+
+# 34. CACHE Y COSTOS
+
+El cálculo solar no debería ejecutarse innecesariamente en cada interacción.
+
+Analizar una estrategia de cache.
+
+Por ejemplo, los datos solares dependen principalmente de:
+
+* fecha
+* ubicación
+
+Por lo tanto, podrían reutilizarse.
+
+Diseñar el sistema para minimizar:
+
+* llamadas API
+* consumo de servidor
+* costos
+* latencia
+
+---
+
+# 35. RENDIMIENTO
+
+El reloj virtual podría actualizarse cada segundo, pero no quiero que eso provoque cálculos astronómicos innecesarios.
+
+Diseñar el sistema para:
+
+1. calcular los eventos solares cuando sea necesario;
+2. cachearlos;
+3. calcular el factor de transformación;
+4. actualizar el reloj virtual de forma eficiente.
+
+El reloj debería funcionar fluidamente sin recalcular toda la lógica en cada segundo.
+
+---
+
+# 36. FUTURA INTELIGENCIA ARTIFICIAL
+
+La arquitectura debe permitir incorporar posteriormente IA.
+
+Por ejemplo:
+
+"Organiza mi día."
+
+La IA podría analizar:
+
+* tareas
+* duración
+* prioridades
+* hábitos
+* horas virtuales
+* reuniones
+* descansos
+
+y proponer automáticamente una planificación.
+
+Ejemplo:
+
+"Quiero trabajar 6 horas, hacer ejercicio 1 hora y estudiar 2 horas."
+
+La IA podría distribuir esas actividades dentro del día virtual.
+
+Pero esto queda fuera del MVP.
+
+---
+
+# 37. PRINCIPIO DE DISEÑO
+
+La aplicación no debe pensar:
+
+"¿Qué hora civil debería mostrar?"
+
+Debe pensar:
+
+"¿En qué posición relativa del ciclo solar se encuentra el usuario?"
+
+El tiempo virtual es una representación normalizada del ciclo diario.
+
+El tiempo civil es solamente la forma de ejecutar esa planificación en el mundo real.
+
+---
+
+# 38. ANÁLISIS PREVIO OBLIGATORIO
+
+Antes de escribir código quiero que realices un análisis técnico completo.
+
+Primero entrega:
+
+### A. Interpretación del concepto
+
+Explica con tus propias palabras qué entiendes por Tiempo Virtual Normalizado.
+
+### B. Modelo matemático
+
+Formaliza rigurosamente:
+
+real → virtual
+
+y
+
+virtual → real.
+
+### C. Ejemplos
+
+Mostrar al menos:
+
+* día corto
+* día largo
+* día de aproximadamente 12 horas de luz
+
+### D. Casos polares
+
+Explicar exactamente cómo manejar:
+
+* 24 horas de luz
+* 24 horas de oscuridad
+* ausencia de sunrise
+* ausencia de sunset
+
+### E. Arquitectura
+
+Proponer arquitectura frontend/backend.
+
+### F. Modelo de datos
+
+Proponer tablas/entidades y relaciones.
+
+### G. Motor temporal
+
+Definir las funciones y APIs principales del Normalized Time Engine.
+
+### H. Stack
+
+Proponer tecnologías concretas y justificar cada una.
+
+### I. UX
+
+Proponer la estructura de las pantallas principales.
+
+### J. Riesgos
+
+Identificar problemas matemáticos, astronómicos, técnicos, de UX y de producto.
+
+### K. Tests
+
+Diseñar estrategia de pruebas.
+
+---
+
+# 39. REGLA IMPORTANTE ANTES DE IMPLEMENTAR
+
+NO empieces inmediatamente a generar todo el código.
+
+Primero analiza el concepto y valida la arquitectura.
+
+Si encuentras una contradicción matemática o conceptual, señálala.
+
+Si existe una forma mejor de implementar el modelo, propónla.
+
+No aceptes automáticamente mis fórmulas si encuentras un problema.
+
+La prioridad es obtener un sistema:
+
+* matemáticamente correcto
+* reversible
+* continuo
+* robusto
+* preciso
+* escalable
+* eficiente
+* fácil de mantener
+
+Una vez aprobado el diseño, desarrollar el MVP paso a paso.
+
+---
+
+# 40. OBJETIVO FINAL
+
+El producto final debe permitir que una persona pueda vivir su planificación diaria utilizando un **reloj virtual normalizado por el ciclo solar**, de manera que:
+
+**cada día tenga siempre 24 horas virtuales**
+
+con:
+
+**06:00 virtual = amanecer**
+
+**18:00 virtual = atardecer**
+
+y donde la duración real de la luz y oscuridad determine únicamente la velocidad con la que transcurre el tiempo virtual respecto del tiempo civil.
+
+El usuario planifica en tiempo virtual.
+
+El sistema convierte automáticamente esa planificación al tiempo civil real.
+
+La aplicación debe hacer que esta complejidad sea invisible para el usuario final.
+
+La visión a largo plazo es convertir este sistema en una plataforma de:
+
+**gestión del tiempo + productividad + planificación + hábitos + agenda + gestión de trabajo + RRHH + planificación empresarial**, utilizando el Tiempo Virtual Normalizado como infraestructura temporal fundamental.

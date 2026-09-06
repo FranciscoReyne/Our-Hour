@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0B0F19"/>
+      <stop offset="100%" stop-color="#030712"/>
+    </radialGradient>
+
+    <!-- Solar Golden Glow -->
+    <linearGradient id="solarGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="50%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#F97316"/>
+    </linearGradient>
+
+    <!-- Indigo Night Arc -->
+    <linearGradient id="nightGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="50%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+
+    <!-- Celestial Ring Gradient -->
+    <conicGradient id="ringConic">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="50%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </conicGradient>
+
+    <!-- Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="500" height="500" rx="100" fill="url(#bgGrad)"/>
+  
+  <!-- Outer Subtle Tech Ring -->
+  <circle cx="250" cy="250" r="210" fill="none" stroke="#1E293B" stroke-width="1.5" stroke-dasharray="4 8"/>
+  <circle cx="250" cy="250" r="185" fill="none" stroke="#334155" stroke-width="1"/>
+
+  <!-- Glowing Daylight Semi-Arc (Top half: 06:00 to 18:00) -->
+  <path d="M 90 250 A 160 160 0 0 1 410 250" fill="none" stroke="url(#solarGlow)" stroke-width="8" stroke-linecap="round" filter="url(#glow)"/>
+  
+  <!-- Glowing Night Semi-Arc (Bottom half: 18:00 to 06:00) -->
+  <path d="M 410 250 A 160 160 0 0 1 90 250" fill="none" stroke="url(#nightGlow)" stroke-width="8" stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- Dial Hour Ticks -->
+  <!-- 12:00 Solar Noon (Top) -->
+  <line x1="250" y1="80" x2="250" y2="105" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+  <!-- 00:00 Solar Nadir (Bottom) -->
+  <line x1="250" y1="395" x2="250" y2="420" stroke="#818CF8" stroke-width="4" stroke-linecap="round"/>
+  <!-- 06:00 Sunrise (Left) -->
+  <line x1="80" y1="250" x2="105" y2="250" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+  <!-- 18:00 Sunset (Right) -->
+  <line x1="395" y1="250" x2="420" y2="250" stroke="#F97316" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Inner Ambient Orb -->
+  <circle cx="250" cy="250" r="120" fill="#0B132B" fill-opacity="0.8" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- Golden Sun Core (Solar Noon position) -->
+  <circle cx="250" cy="180" r="32" fill="url(#solarGlow)" filter="url(#softGlow)"/>
+  <circle cx="250" cy="180" r="26" fill="#FDE68A"/>
+
+  <!-- Crescent Moon & Stars (Night half) -->
+  <path d="M 245 295 A 25 25 0 0 0 270 330 A 30 30 0 1 1 245 295 Z" fill="#C7D2FE" filter="url(#glow)"/>
+
+  <!-- Hourglass / Infinity Meridian Node -->
+  <circle cx="250" cy="250" r="6" fill="#F8FAFC" filter="url(#glow)"/>
+
+  <!-- Typography: OurHour -->
+  <text x="250" y="465" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="28" font-weight="800" letter-spacing="6" fill="#F8FAFC">OURHOUR</text>
+  <text x="250" y="485" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" letter-spacing="3" fill="#94A3B8">SOLAR NORMALIZED TIME</text>
+</svg>

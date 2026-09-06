@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="diagBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+
+    <linearGradient id="dayGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#F97316"/>
+    </linearGradient>
+
+    <linearGradient id="nightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="500" rx="24" fill="url(#diagBg)" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- Title Header -->
+  <text x="500" y="50" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="800" fill="#F8FAFC" letter-spacing="1">
+    PIECEWISE NORMALIZATION ARCHITECTURE
+  </text>
+  <text x="500" y="75" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="500" fill="#94A3B8">
+    Continuous Dual-Domain Mapping: Real Civil Timeline ⟷ 24-Hour Virtual Circadian Scale
+  </text>
+
+  <!-- Real Civil Timeline Box -->
+  <g transform="translate(60, 110)">
+    <!-- Label -->
+    <text x="0" y="20" font-family="sans-serif" font-size="14" font-weight="700" fill="#E2E8F0">1. Real Civil Time (t)</text>
+    <text x="0" y="38" font-family="sans-serif" font-size="12" font-weight="400" fill="#64748B">Variable daylight &amp; night lengths (e.g. 15h Summer / 9h Winter)</text>
+
+    <!-- Civil Timeline Bar -->
+    <rect x="0" y="55" width="880" height="42" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+    
+    <!-- Morning Night (00:00 to Sunrise e.g. 05:45) -->
+    <rect x="0" y="55" width="210" height="42" rx="8" fill="#312E81" opacity="0.6"/>
+    <text x="105" y="81" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#C7D2FE">Pre-Dawn Night</text>
+
+    <!-- Real Daylight (05:45 to 20:15) -->
+    <rect x="210" y="55" width="530" height="42" fill="url(#dayGrad)" opacity="0.85"/>
+    <text x="475" y="81" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#FFFFFF">Real Daylight [tsunrise → tsunset] (14.5 Hours)</text>
+
+    <!-- Evening Night (20:15 to 24:00) -->
+    <rect x="740" y="55" width="140" height="42" rx="8" fill="#312E81" opacity="0.6"/>
+    <text x="810" y="81" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="600" fill="#C7D2FE">Post-Sunset</text>
+
+    <!-- Boundary Markers -->
+    <line x1="210" y1="50" x2="210" y2="102" stroke="#FBBF24" stroke-width="2.5"/>
+    <text x="210" y="118" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#FBBF24">Sunrise (05:45)</text>
+
+    <line x1="740" y1="50" x2="740" y2="102" stroke="#F97316" stroke-width="2.5"/>
+    <text x="740" y="118" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#F97316">Sunset (20:15)</text>
+  </g>
+
+  <!-- Transformation Arrows & Formulas -->
+  <g transform="translate(60, 265)">
+    <!-- Daylight Transformation Formula -->
+    <path d="M 350 0 L 350 35" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 4"/>
+    <rect x="230" y="0" width="240" height="32" rx="6" fill="#111827" stroke="#F59E0B" stroke-width="1.5"/>
+    <text x="350" y="21" text-anchor="middle" font-family="monospace" font-size="11.5" font-weight="700" fill="#FBBF24">v = 6.0 + 12.0 × ((t - trise)/Δtday)</text>
+
+    <!-- Night Transformation Formula -->
+    <rect x="660" y="0" width="220" height="32" rx="6" fill="#111827" stroke="#6366F1" stroke-width="1.5"/>
+    <text x="770" y="21" text-anchor="middle" font-family="monospace" font-size="11.5" font-weight="700" fill="#818CF8">v = 18.0 + 12.0 × ((t - tset)/Δtnight)</text>
+  </g>
+
+  <!-- Virtual Normalized Time Bar -->
+  <g transform="translate(60, 320)">
+    <!-- Label -->
+    <text x="0" y="20" font-family="sans-serif" font-size="14" font-weight="700" fill="#E2E8F0">2. Solar Normalized Virtual Time (v)</text>
+    <text x="0" y="38" font-family="sans-serif" font-size="12" font-weight="400" fill="#64748B">Invariant 24 Virtual Hours: Exactly 12.0h Day + 12.0h Night</text>
+
+    <!-- Virtual Timeline Bar -->
+    <rect x="0" y="55" width="880" height="42" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+
+    <!-- Morning Virtual Night (00:00 -> 06:00 = 6 virtual hours) -->
+    <rect x="0" y="55" width="220" height="42" rx="8" fill="url(#nightGrad)" opacity="0.75"/>
+    <text x="110" y="81" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#E0E7FF">00:00 → 06:00 (6.0h)</text>
+
+    <!-- Virtual Daylight (06:00 -> 18:00 = 12 virtual hours) -->
+    <rect x="220" y="55" width="440" height="42" fill="url(#dayGrad)" opacity="0.9" filter="url(#glow)"/>
+    <text x="440" y="81" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="900" fill="#FFFFFF">☀️ 06:00 → 18:00 NORMALIZED DAYLIGHT (12.0h)</text>
+
+    <!-- Evening Virtual Night (18:00 -> 24:00 = 6 virtual hours) -->
+    <rect x="660" y="55" width="220" height="42" rx="8" fill="url(#nightGrad)" opacity="0.75"/>
+    <text x="770" y="81" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#E0E7FF">18:00 → 24:00 (6.0h)</text>
+
+    <!-- Anchors -->
+    <line x1="220" y1="50" x2="220" y2="102" stroke="#FFFFFF" stroke-width="2.5"/>
+    <text x="220" y="118" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="800" fill="#FBBF24">06:00 Virtual (Sunrise)</text>
+
+    <line x1="440" y1="50" x2="440" y2="102" stroke="#FFFFFF" stroke-width="2.5"/>
+    <text x="440" y="118" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="800" fill="#FBBF24">12:00 Virtual (Solar Noon)</text>
+
+    <line x1="660" y1="50" x2="660" y2="102" stroke="#FFFFFF" stroke-width="2.5"/>
+    <text x="660" y="118" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="800" fill="#F97316">18:00 Virtual (Sunset)</text>
+  </g>
+</svg>

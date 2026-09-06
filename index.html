@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OurHour — Circadian Digital Wristwatch</title>
+  
+  <!-- SEO & Social Meta Tags -->
+  <meta name="description" content="OurHour is a minimalist heliocentric smartwatch engine that normalizes human daily schedules into 24 invariant virtual hours: 06:00 is always sunrise, 18:00 is always sunset." />
+  <meta name="author" content="Francisco Reyne" />
+
+  <!-- Open Graph / Twitter Cards -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="OurHour — Circadian Digital Wristwatch" />
+  <meta property="og:description" content="Synchronize your biological rhythm and civil schedule with a solar-normalized digital wristwatch." />
+  <meta property="og:image" content="./assets/banner.svg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="stylesheet" href="./src/styles/main.css" />
+  <link rel="icon" type="image/svg+xml" href="./public/favicon.svg" />
+</head>
+<body>
+  <!-- Centered Smartwatch Container -->
+  <div class="watch-container">
+    <!-- Physical Hardware Pushers on Watch Sides -->
+    <button id="btn-crown-live" class="watch-pusher pusher-top-right" title="Click Crown to Toggle Live Clock">
+      <span class="pusher-led"></span> CROWN
+    </button>
+    <button id="btn-gps" class="watch-pusher pusher-bottom-left" title="Click to Sync Device GPS">
+      📍 GPS
+    </button>
+
+    <!-- The Titanium Watch Chassis -->
+    <div class="watch-chassis">
+      <div class="sapphire-glass-glare"></div>
+
+      <!-- Watchface Screen (OLED) -->
+      <div class="watch-screen">
+        
+        <!-- Zone 1: Complications Header (City, Date, Solar Phase) -->
+        <header class="complications-bar">
+          <div class="pill pill-city" title="Change Location">
+            <select id="city-select" aria-label="Select City">
+              <option value="santiago" selected>Santiago (CL)</option>
+              <option value="new-york">New York (US)</option>
+              <option value="london">London (UK)</option>
+              <option value="madrid">Madrid (ES)</option>
+              <option value="tokyo">Tokyo (JP)</option>
+              <option value="quito">Quito (EC)</option>
+              <option value="tromso">Tromsø (NO)</option>
+              <option value="reykjavik">Reykjavík (IS)</option>
+              <option value="singapore">Singapore (SG)</option>
+              <option value="sydney">Sydney (AU)</option>
+            </select>
+          </div>
+          <div class="pill pill-date" title="Select Calendar Date">
+            <input type="date" id="date-picker" aria-label="Select Date" />
+          </div>
+          <div id="solar-phase-badge" class="pill pill-phase">
+            ☀️ DAY
+          </div>
+        </header>
+
+        <!-- Zone 2: Circular Horizon Dial & Hero Digital Virtual Time -->
+        <main class="dial-core">
+          <canvas id="circadian-canvas" width="440" height="440"></canvas>
+          
+          <div class="digital-readout-overlay">
+            <div class="virtual-time-label">SOLAR NORMALIZED TIME</div>
+            <div id="active-context-pill" class="active-context-pill" title="Active solar context: City, Date, Civil Time">
+              📍 <span id="ctx-city">Santiago (CL)</span> • 📅 <span id="ctx-date">--</span> • 🕒 <span id="ctx-civil-time">--</span>
+            </div>
+            <div id="virtual-clock-time" class="virtual-digits">06:00:00</div>
+            <div class="virtual-anchor-sub">06:00 RISE • 18:00 SET</div>
+            <div id="dilation-rate-badge" class="dilation-pill">⚡ 1.00x SPEED</div>
+          </div>
+        </main>
+
+        <!-- Zone 3: Civil Clock Readout & Direct Inline Editor -->
+        <section class="civil-clock-strip">
+          <span class="civil-label">CIVIL CLOCK:</span>
+          <span id="real-clock-time" class="civil-digits">07:30:00</span>
+          <input type="time" step="1" id="civil-time-input" class="civil-edit-input" title="Click to manually edit civil time" />
+        </section>
+
+        <!-- Zone 4: Solar Ephemeris Mini-Matrix -->
+        <section class="ephemeris-matrix">
+          <div class="eph-box">
+            <span class="eph-label">RISE</span>
+            <span id="stat-sunrise" class="eph-val">07:15</span>
+          </div>
+          <div class="eph-box">
+            <span class="eph-label">NOON</span>
+            <span id="stat-noon" class="eph-val">13:42</span>
+          </div>
+          <div class="eph-box">
+            <span class="eph-label">SET</span>
+            <span id="stat-sunset" class="eph-val">20:10</span>
+          </div>
+          <div class="eph-box">
+            <span class="eph-label">LIGHT</span>
+            <span id="stat-daylength" class="eph-val">12.9h</span>
+          </div>
+        </section>
+
+        <!-- Zone 5: Tactile 24-Hour Bezel Scrubber & Landmark Buttons -->
+        <footer class="crown-controls">
+          <input type="range" id="time-slider" min="0" max="1439" value="720" step="1" class="bezel-slider" title="24-Hour Time Scrubber" />
+          
+          <div class="landmark-buttons">
+            <button id="btn-jump-sunrise" class="btn-snap" title="Jump to Sunrise (06:00 Virtual)">🌅 06:00v</button>
+            <button id="btn-jump-noon" class="btn-snap" title="Jump to Solar Noon (12:00 Virtual)">☀️ 12:00v</button>
+            <button id="btn-jump-sunset" class="btn-snap" title="Jump to Sunset (18:00 Virtual)">🌇 18:00v</button>
+            <button id="btn-jump-midnight" class="btn-snap" title="Jump to Solar Nadir (00:00 Virtual)">🌌 00:00v</button>
+            <button id="btn-reset-now" class="btn-snap btn-live" title="Toggle Live Clock Mode">⚡ LIVE</button>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <!-- External Clean Link to Documentation -->
+    <div class="doc-link-wrap">
+      <a href="./developer.html" class="doc-link">📖 Developer SDK &amp; Mathematical Architecture →</a>
+    </div>
+  </div>
+
+  <!-- Complete Self-Contained Engine & Dial Renderer (Runs 100% Offline in all environments) -->
+  <script>
+    (function() {
+      var RAD = Math.PI / 180;
+      var DEG = 180 / Math.PI;
+      var J1970 = 2440587.5;
+      var J2000 = 2451545.0;
+      var DAY_MS = 86400000;
+      var SUN_ALT_OFFICIAL = -0.833;
+      var SUN_ALT_CIVIL = -6.0;
+
+      function toJulian(date) { return date.getTime() / DAY_MS + J1970; }
+      function fromJulian(j) { return new Date((j - J1970) * DAY_MS); }
+      function toDays(date) { return toJulian(date) - J2000; }
+      function rightAscension(l, b) { return Math.atan2(Math.sin(l) * Math.cos(23.4397 * RAD) - Math.tan(b) * Math.sin(23.4397 * RAD), Math.cos(l)); }
+      function declination(l, b) { return Math.asin(Math.sin(b) * Math.cos(23.4397 * RAD) + Math.cos(b) * Math.sin(23.4397 * RAD) * Math.sin(l)); }
+      function solarMeanAnomaly(d) { return RAD * (357.5291 + 0.98560028 * d); }
+      function eclipticLongitude(M) { var C = RAD * (1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M)); return M + C + RAD * 102.9372 + Math.PI; }
+      function sunCoords(d) { var M = solarMeanAnomaly(d); var L = eclipticLongitude(M); return { dec: declination(L, 0), ra: rightAscension(L, 0) }; }
+      function siderealTime(d, lw) { return RAD * (280.16 + 360.9856235 * d) - lw; }
+      function altitude(H, phi, dec) { return Math.asin(Math.sin(phi) * Math.sin(dec) + Math.cos(phi) * Math.cos(dec) * Math.cos(H)); }
+      function azimuth(H, phi, dec) { return Math.atan2(Math.sin(H), Math.cos(H) * Math.sin(phi) - Math.tan(dec) * Math.cos(phi)) + Math.PI; }
+
+      function getSolarPosition(date, lat, lng) {
+        var lw = -lng * RAD;
+        var phi = lat * RAD;
+        var d = toDays(date);
+        var c = sunCoords(d);
+        var H = siderealTime(d, lw) - c.ra;
+        var alt = altitude(H, phi, c.dec);
+        var az = azimuth(H, phi, c.dec);
+        return {
+          altitudeDeg: alt * DEG,
+          azimuthDeg: ((az * DEG + 180) % 360 + 360) % 360
+        };
+      }
+
+      function julianCycle(d, lw) { return Math.round(d - 0.0009 - lw / (2 * Math.PI)); }
+      function approxTransit(Ht, lw, n) { return 0.0009 + (Ht + lw) / (2 * Math.PI) + n; }
+      function solarTransitJ(ds, M, L) { return J2000 + ds + 0.0053 * Math.sin(M) - 0.0069 * Math.sin(2 * L); }
+      function hourAngle(h0, phi, dec) {
+        var num = Math.sin(h0) - Math.sin(phi) * Math.sin(dec);
+        var denom = Math.cos(phi) * Math.cos(dec);
+        var cosH0 = num / denom;
+        if (cosH0 > 1 || cosH0 < -1) return null;
+        return Math.acos(cosH0);
+      }
+
+      function computeSolarTimesForDate(date, location) {
+        var lat = location.latitude, lng = location.longitude;
+        var lw = -lng * RAD, phi = lat * RAD;
+        var solarDayOffsetMs = (lng / 360.0) * DAY_MS;
+        var localSolarDate = new Date(date.getTime() + solarDayOffsetMs);
+        var refNoonUtc = new Date(Date.UTC(localSolarDate.getUTCFullYear(), localSolarDate.getUTCMonth(), localSolarDate.getUTCDate(), 12, 0, 0));
+        var d = toDays(refNoonUtc);
+        var n = julianCycle(d, lw);
+        var ds = approxTransit(0, lw, n);
+        var M = solarMeanAnomaly(ds);
+        var L = eclipticLongitude(M);
+        var dec = declination(L, 0);
+        var Jnoon = solarTransitJ(ds, M, L);
+        var solarNoon = fromJulian(Jnoon);
+        var solarMidnight = fromJulian(Jnoon - 0.5);
+
+        var sinAltNoon = Math.sin(phi) * Math.sin(dec) + Math.cos(phi) * Math.cos(dec);
+        var altNoonDeg = Math.asin(sinAltNoon) * DEG;
+        var sinAltNadir = Math.sin(phi) * Math.sin(dec) - Math.cos(phi) * Math.cos(dec);
+        var altNadirDeg = Math.asin(sinAltNadir) * DEG;
+        var isPolarDay = altNadirDeg >= SUN_ALT_OFFICIAL;
+        var isPolarNight = altNoonDeg < SUN_ALT_OFFICIAL;
+
+        var h0 = hourAngle(SUN_ALT_OFFICIAL * RAD, phi, dec);
+        var sunrise = null, sunset = null;
+        if (h0 !== null) {
+          var Jset = solarTransitJ(approxTransit(h0, lw, n), M, L);
+          var Jrise = solarTransitJ(approxTransit(-h0, lw, n), M, L);
+          sunrise = fromJulian(Jrise);
+          sunset = fromJulian(Jset);
+        }
+
+        var h0Civil = hourAngle(SUN_ALT_CIVIL * RAD, phi, dec);
+        var civilDawn = null, civilDusk = null;
+        if (h0Civil !== null) {
+          civilDawn = fromJulian(solarTransitJ(approxTransit(-h0Civil, lw, n), M, L));
+          civilDusk = fromJulian(solarTransitJ(approxTransit(h0Civil, lw, n), M, L));
+        }
+
+        var nextN = n + 1;
+        var nextDs = approxTransit(0, lw, nextN);
+        var nextM = solarMeanAnomaly(nextDs);
+        var nextL = eclipticLongitude(nextM);
+        var nextDec = declination(nextL, 0);
+        var nextH0 = hourAngle(SUN_ALT_OFFICIAL * RAD, phi, nextDec);
+        var nextSunrise = null;
+        if (nextH0 !== null) {
+          nextSunrise = fromJulian(solarTransitJ(approxTransit(-nextH0, lw, nextN), nextM, nextL));
+        }
+
+        var prevN = n - 1;
+        var prevDs = approxTransit(0, lw, prevN);
+        var prevM = solarMeanAnomaly(prevDs);
+        var prevL = eclipticLongitude(prevM);
+        var prevDec = declination(prevL, 0);
+        var prevH0 = hourAngle(SUN_ALT_OFFICIAL * RAD, phi, prevDec);
+        var prevSunset = null;
+        if (prevH0 !== null) {
+          prevSunset = fromJulian(solarTransitJ(approxTransit(prevH0, lw, prevN), prevM, prevL));
+        }
+
+        var daylightDurationMs = 0, nightDurationMs = 0;
+        if (isPolarDay) { daylightDurationMs = DAY_MS; nightDurationMs = 0; }
+        else if (isPolarNight) { daylightDurationMs = 0; nightDurationMs = DAY_MS; }
+        else if (sunrise && sunset) {
+          daylightDurationMs = sunset.getTime() - sunrise.getTime();
+          nightDurationMs = nextSunrise ? (nextSunrise.getTime() - sunset.getTime()) : (DAY_MS - daylightDurationMs);
+        } else {
+          daylightDurationMs = DAY_MS / 2; nightDurationMs = DAY_MS / 2;
+        }
+
+        return {
+          sunrise: sunrise,
+          sunset: sunset,
+          solarNoon: solarNoon,
+          solarMidnight: solarMidnight,
+          civilDawn: civilDawn,
+          civilDusk: civilDusk,
+          nextSunrise: nextSunrise,
+          prevSunset: prevSunset,
+          daylightDurationMs: daylightDurationMs,
+          nightDurationMs: nightDurationMs,
+          isPolarDay: isPolarDay,
+          isPolarNight: isPolarNight
+        };
+      }
+
+      var CITIES = [
+        { id: 'santiago', name: 'Santiago', country: 'Chile', latitude: -33.4489, longitude: -70.6693, timezone: 'America/Santiago' },
+        { id: 'new-york', name: 'New York', country: 'United States', latitude: 40.7128, longitude: -74.0060, timezone: 'America/New_York' },
+        { id: 'london', name: 'London', country: 'United Kingdom', latitude: 51.5074, longitude: -0.1278, timezone: 'Europe/London' },
+        { id: 'madrid', name: 'Madrid', country: 'Spain', latitude: 40.4168, longitude: -3.7038, timezone: 'Europe/Madrid' },
+        { id: 'tokyo', name: 'Tokyo', country: 'Japan', latitude: 35.6762, longitude: 139.6503, timezone: 'Asia/Tokyo' },
+        { id: 'quito', name: 'Quito', country: 'Ecuador', latitude: -0.1807, longitude: -78.4678, timezone: 'America/Guayaquil' },
+        { id: 'tromso', name: 'Tromsø', country: 'Norway', latitude: 69.6492, longitude: 18.9553, timezone: 'Europe/Oslo' },
+        { id: 'reykjavik', name: 'Reykjavík', country: 'Iceland', latitude: 64.1466, longitude: -21.9426, timezone: 'Atlantic/Reykjavik' },
+        { id: 'singapore', name: 'Singapore', country: 'Singapore', latitude: 1.3521, longitude: 103.8198, timezone: 'Asia/Singapore' },
+        { id: 'sydney', name: 'Sydney', country: 'Australia', latitude: -33.8688, longitude: 151.2093, timezone: 'Australia/Sydney' }
+      ];
+
+      function NormalizedEngine() {
+        this.cache = new Map();
+      }
+
+      NormalizedEngine.prototype.getSolarTimes = function(date, location) {
+        var solarDayOffsetMs = (location.longitude / 360.0) * DAY_MS;
+        var localSolarDate = new Date(date.getTime() + solarDayOffsetMs);
+        var key = localSolarDate.getUTCFullYear() + '-' + localSolarDate.getUTCMonth() + '-' + localSolarDate.getUTCDate() + '_' + location.latitude.toFixed(3) + '_' + location.longitude.toFixed(3);
+        if (this.cache.has(key)) return this.cache.get(key);
+        var st = computeSolarTimesForDate(date, location);
+        this.cache.set(key, st);
+        return st;
+      };
+
+      NormalizedEngine.prototype.toVirtualTime = function(date, location) {
+        var solarTimes = this.getSolarTimes(date, location);
+        var solarPos = getSolarPosition(date, location.latitude, location.longitude);
+        var tMs = date.getTime();
+        var virtualHour = 6.0;
+        var phase = 'DAY';
+        var dilationFactor = 1.0;
+        var phaseProgress = 0.0;
+
+        if (solarTimes.isPolarDay) {
+          phase = 'POLAR_DAY';
+          dilationFactor = 1.0;
+          var midMs = solarTimes.solarMidnight.getTime();
+          var diffMs = (tMs - midMs) % DAY_MS;
+          if (diffMs < 0) diffMs += DAY_MS;
+          virtualHour = (diffMs / DAY_MS) * 24.0;
+          phaseProgress = (virtualHour % 24) / 24.0;
+        } else if (solarTimes.isPolarNight) {
+          phase = 'POLAR_NIGHT';
+          dilationFactor = 1.0;
+          var midMs = solarTimes.solarMidnight.getTime();
+          var diffMs = (tMs - midMs) % DAY_MS;
+          if (diffMs < 0) diffMs += DAY_MS;
+          virtualHour = (diffMs / DAY_MS) * 24.0;
+          phaseProgress = (virtualHour % 24) / 24.0;
+        } else {
+          var sunriseMs = solarTimes.sunrise.getTime();
+          var sunsetMs = solarTimes.sunset.getTime();
+          if (tMs >= sunriseMs - 1000 && tMs <= sunsetMs + 1000) {
+            phase = 'DAY';
+            var dayLen = sunsetMs - sunriseMs;
+            phaseProgress = dayLen > 0 ? Math.max(0, Math.min(1, (tMs - sunriseMs) / dayLen)) : 0;
+            virtualHour = 6.0 + phaseProgress * 12.0;
+            dilationFactor = dayLen > 0 ? (12.0 * 3600000.0) / dayLen : 1.0;
+          } else if (tMs > sunsetMs) {
+            phase = 'NIGHT';
+            var nextSunriseMs = solarTimes.nextSunrise ? solarTimes.nextSunrise.getTime() : (sunsetMs + DAY_MS / 2);
+            var nightLen = nextSunriseMs - sunsetMs;
+            phaseProgress = nightLen > 0 ? Math.max(0, Math.min(1, (tMs - sunsetMs) / nightLen)) : 0;
+            virtualHour = (18.0 + phaseProgress * 12.0) % 24.0;
+            dilationFactor = nightLen > 0 ? (12.0 * 3600000.0) / nightLen : 1.0;
+          } else {
+            phase = 'NIGHT';
+            var prevSunsetMs = solarTimes.prevSunset ? solarTimes.prevSunset.getTime() : (sunriseMs - DAY_MS / 2);
+            var nightLen = sunriseMs - prevSunsetMs;
+            phaseProgress = nightLen > 0 ? Math.max(0, Math.min(1, (tMs - prevSunsetMs) / nightLen)) : 0;
+            virtualHour = (18.0 + phaseProgress * 12.0) % 24.0;
+            dilationFactor = nightLen > 0 ? (12.0 * 3600000.0) / nightLen : 1.0;
+          }
+        }
+
+        virtualHour = (virtualHour % 24.0 + 24.0) % 24.0;
+        var vHours = Math.floor(virtualHour);
+        var remMinutes = (virtualHour - vHours) * 60.0;
+        var vMinutes = Math.floor(remMinutes);
+        var vSeconds = Math.floor((remMinutes - vMinutes) * 60.0);
+        var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
+        var virtualTimeStr = pad(vHours) + ':' + pad(vMinutes) + ':' + pad(vSeconds);
+
+        return {
+          virtualHour: virtualHour,
+          virtualHours: vHours,
+          virtualMinutes: vMinutes,
+          virtualSeconds: vSeconds,
+          virtualTimeStr: virtualTimeStr,
+          phase: phase,
+          dilationFactor: dilationFactor,
+          phaseProgress: phaseProgress,
+          solarTimes: solarTimes,
+          solarAltitudeDeg: solarPos.altitudeDeg,
+          solarAzimuthDeg: solarPos.azimuthDeg,
+          location: location
+        };
+      };
+
+      function DialRenderer(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.dpr = window.devicePixelRatio || 1;
+        this.setupCanvas();
+        var self = this;
+        window.addEventListener('resize', function() { self.setupCanvas(); });
+      }
+
+      DialRenderer.prototype.setupCanvas = function() {
+        var size = 440;
+        this.canvas.width = size * this.dpr;
+        this.canvas.height = size * this.dpr;
+        if (typeof this.ctx.resetTransform === 'function') {
+          this.ctx.resetTransform();
+        } else {
+          this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+        this.ctx.scale(this.dpr, this.dpr);
+      };
+
+      DialRenderer.prototype.render = function(data) {
+        var ctx = this.ctx;
+        if (!ctx) return;
+        var cx = 220, cy = 220, outerRadius = 202, innerRadius = 186;
+        ctx.save();
+        ctx.clearRect(0, 0, 440, 440);
+
+        var isDay = data.phase === 'DAY' || data.phase === 'POLAR_DAY';
+
+        // Ambient background glow
+        var bgGrad = ctx.createRadialGradient(cx, cy, 60, cx, cy, outerRadius * 1.05);
+        if (isDay) {
+          bgGrad.addColorStop(0, 'rgba(245, 158, 11, 0.14)');
+          bgGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        } else {
+          bgGrad.addColorStop(0, 'rgba(99, 102, 241, 0.14)');
+          bgGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        }
+        ctx.fillStyle = bgGrad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, outerRadius * 1.05, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Groove
+        ctx.beginPath();
+        ctx.arc(cx, cy, (outerRadius + innerRadius) / 2, 0, Math.PI * 2);
+        ctx.strokeStyle = '#111622';
+        ctx.lineWidth = outerRadius - innerRadius;
+        ctx.stroke();
+
+        // Daytime Arc (06:00 to 18:00 = Top Half: PI to 0)
+        var dayGrad = ctx.createLinearGradient(cx - outerRadius, cy, cx + outerRadius, cy);
+        dayGrad.addColorStop(0, '#F59E0B');
+        dayGrad.addColorStop(0.5, '#FBBF24');
+        dayGrad.addColorStop(1, '#F97316');
+        ctx.beginPath();
+        ctx.arc(cx, cy, (outerRadius + innerRadius) / 2, Math.PI, 0, false);
+        ctx.strokeStyle = dayGrad;
+        ctx.lineWidth = outerRadius - innerRadius;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // Nighttime Arc (18:00 to 06:00 = Bottom Half: 0 to PI)
+        var nightGrad = ctx.createLinearGradient(cx + outerRadius, cy, cx - outerRadius, cy);
+        nightGrad.addColorStop(0, '#6366F1');
+        nightGrad.addColorStop(0.5, '#8B5CF6');
+        nightGrad.addColorStop(1, '#38BDF8');
+        ctx.beginPath();
+        ctx.arc(cx, cy, (outerRadius + innerRadius) / 2, 0, Math.PI, false);
+        ctx.strokeStyle = nightGrad;
+        ctx.lineWidth = outerRadius - innerRadius;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+
+        // Ticks
+        for (var h = 0; h < 24; h += 3) {
+          var angle = ((h - 18) / 24) * Math.PI * 2;
+          var isMajor = h % 6 === 0;
+          var r1 = outerRadius + 2;
+          var r2 = outerRadius + (isMajor ? 8 : 4);
+          var x1 = cx + Math.cos(angle) * r1;
+          var y1 = cy + Math.sin(angle) * r1;
+          var x2 = cx + Math.cos(angle) * r2;
+          var y2 = cy + Math.sin(angle) * r2;
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.strokeStyle = isMajor ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
+          ctx.lineWidth = isMajor ? 2 : 1;
+          ctx.stroke();
+        }
+
+        // Orbital LED Node
+        var currentAngle = ((data.virtualHour - 18) / 24) * Math.PI * 2;
+        var needleR = (outerRadius + innerRadius) / 2;
+        var orbX = cx + Math.cos(currentAngle) * needleR;
+        var orbY = cy + Math.sin(currentAngle) * needleR;
+
+        ctx.beginPath();
+        ctx.arc(orbX, orbY, 10, 0, Math.PI * 2);
+        ctx.fillStyle = isDay ? '#FDE68A' : '#C7D2FE';
+        ctx.shadowColor = isDay ? '#F59E0B' : '#6366F1';
+        ctx.shadowBlur = 16;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.beginPath();
+        ctx.arc(orbX, orbY, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fill();
+
+        ctx.restore();
+      };
+
+      // App Controller
+      function AppController() {
+        this.engine = new NormalizedEngine();
+        this.currentLocation = CITIES[0];
+        this.isLiveMode = true;
+        this.customDateStr = '';
+        this.customTimeMinutes = 720;
+        this.dial = null;
+        this.timerId = null;
+      }
+
+      AppController.prototype.getTimePartsForTimezone = function(date, timeZone) {
+        if (!timeZone) return { hours: date.getHours(), minutes: date.getMinutes(), seconds: date.getSeconds() };
+        try {
+          var formatter = new Intl.DateTimeFormat('en-US', { timeZone: timeZone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+          var parts = formatter.formatToParts(date);
+          var getVal = function(t) { var p = parts.find(function(x) { return x.type === t; }); return p ? Number(p.value) : 0; };
+          var h = getVal('hour');
+          if (h === 24) h = 0;
+          return { hours: h, minutes: getVal('minute'), seconds: getVal('second') };
+        } catch(e) {
+          return { hours: date.getHours(), minutes: date.getMinutes(), seconds: date.getSeconds() };
+        }
+      };
+
+      AppController.prototype.getLocalDateStringForTimezone = function(date, timeZone) {
+        var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
+        if (!timeZone) return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+        try {
+          var parts = new Intl.DateTimeFormat('en-US', { timeZone: timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(date);
+          var y = parts.find(function(x) { return x.type === 'year'; }).value;
+          var m = parts.find(function(x) { return x.type === 'month'; }).value;
+          var d = parts.find(function(x) { return x.type === 'day'; }).value;
+          return y + '-' + m + '-' + d;
+        } catch(e) {
+          return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+        }
+      };
+
+      AppController.prototype.createDateInTimezone = function(year, month, day, hours, minutes, seconds, timeZone) {
+        if (!timeZone) return new Date(year, month, day, hours, minutes, seconds);
+        try {
+          var utcGuess = new Date(Date.UTC(year, month, day, hours, minutes, seconds));
+          var formatter = new Intl.DateTimeFormat('en-US', { timeZone: timeZone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+          var parts = formatter.formatToParts(utcGuess);
+          var getVal = function(t) { var p = parts.find(function(x) { return x.type === t; }); return p ? Number(p.value) : 0; };
+          var fHour = getVal('hour'); if (fHour === 24) fHour = 0;
+          var targetAsUtc = Date.UTC(year, month, day, hours, minutes, seconds);
+          var formattedAsUtc = Date.UTC(getVal('year'), getVal('month') - 1, getVal('day'), fHour, getVal('minute'), getVal('second'));
+          return new Date(utcGuess.getTime() + (targetAsUtc - formattedAsUtc));
+        } catch(e) {
+          return new Date(year, month, day, hours, minutes, seconds);
+        }
+      };
+
+      AppController.prototype.getActiveUtcDate = function() {
+        if (this.isLiveMode) return new Date();
+        var p = this.customDateStr.split('-').map(Number);
+        var totalSec = Math.floor(this.customTimeMinutes * 60);
+        var hours = Math.floor(totalSec / 3600);
+        var minutes = Math.floor((totalSec % 3600) / 60);
+        var seconds = totalSec % 60;
+        return this.createDateInTimezone(p[0] || new Date().getFullYear(), p[1] ? p[1] - 1 : new Date().getMonth(), p[2] || new Date().getDate(), hours, minutes, seconds, this.currentLocation.timezone);
+      };
+
+      AppController.prototype.updateLiveButtonState = function() {
+        var liveBtn = document.getElementById('btn-reset-now');
+        var crownBtn = document.getElementById('btn-crown-live');
+        if (liveBtn) {
+          if (this.isLiveMode) {
+            liveBtn.classList.remove('btn-snap');
+            liveBtn.classList.add('btn-live');
+            liveBtn.textContent = '⚡ LIVE';
+          } else {
+            liveBtn.classList.remove('btn-live');
+            liveBtn.classList.add('btn-snap');
+            liveBtn.textContent = '⚡ SNAP';
+          }
+        }
+        if (crownBtn) {
+          var led = crownBtn.querySelector('.pusher-led');
+          if (led) {
+            led.style.background = this.isLiveMode ? '#10B981' : '#F59E0B';
+            led.style.boxShadow = this.isLiveMode ? '0 0 8px #10B981' : '0 0 8px #F59E0B';
+          }
+        }
+      };
+
+      AppController.prototype.updateUI = function() {
+        var activeDate = this.getActiveUtcDate();
+        var data = this.engine.toVirtualTime(activeDate, this.currentLocation);
+        var cityParts = this.getTimePartsForTimezone(activeDate, this.currentLocation.timezone);
+        var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
+        var formattedCivilTime = pad(cityParts.hours) + ':' + pad(cityParts.minutes) + ':' + pad(cityParts.seconds);
+        var formattedDate = this.getLocalDateStringForTimezone(activeDate, this.currentLocation.timezone);
+
+        var virtualClock = document.getElementById('virtual-clock-time');
+        if (virtualClock) virtualClock.textContent = data.virtualTimeStr;
+
+        var realClock = document.getElementById('real-clock-time');
+        if (realClock) realClock.textContent = formattedCivilTime;
+
+        var ctxCity = document.getElementById('ctx-city');
+        if (ctxCity) ctxCity.textContent = this.currentLocation.name + ' (' + this.currentLocation.country + ')';
+
+        var ctxDate = document.getElementById('ctx-date');
+        if (ctxDate) ctxDate.textContent = formattedDate;
+
+        var ctxCivilTime = document.getElementById('ctx-civil-time');
+        if (ctxCivilTime) ctxCivilTime.textContent = formattedCivilTime;
+
+        var phaseBadge = document.getElementById('solar-phase-badge');
+        if (phaseBadge) {
+          var isDay = data.phase === 'DAY' || data.phase === 'POLAR_DAY';
+          phaseBadge.textContent = (isDay ? '☀️' : '🌙') + ' ' + data.phase.replace('_', ' ');
+        }
+
+        var dilationBadge = document.getElementById('dilation-rate-badge');
+        if (dilationBadge) {
+          dilationBadge.textContent = '⚡ ' + data.dilationFactor.toFixed(2) + 'x SPEED';
+        }
+
+        var dateInput = document.getElementById('date-picker');
+        if (dateInput && this.isLiveMode) dateInput.value = formattedDate;
+
+        var timeInput = document.getElementById('civil-time-input');
+        if (timeInput && this.isLiveMode) timeInput.value = formattedCivilTime;
+
+        var slider = document.getElementById('time-slider');
+        if (slider && this.isLiveMode) slider.value = String(cityParts.hours * 60 + cityParts.minutes);
+
+        var self = this;
+        var formatSolar = function(d) {
+          if (!d) return '--:--';
+          var p = self.getTimePartsForTimezone(d, self.currentLocation.timezone);
+          return pad(p.hours) + ':' + pad(p.minutes);
+        };
+
+        var sunriseEl = document.getElementById('stat-sunrise');
+        if (sunriseEl) sunriseEl.textContent = formatSolar(data.solarTimes.sunrise);
+
+        var noonEl = document.getElementById('stat-noon');
+        if (noonEl) noonEl.textContent = formatSolar(data.solarTimes.solarNoon);
+
+        var sunsetEl = document.getElementById('stat-sunset');
+        if (sunsetEl) sunsetEl.textContent = formatSolar(data.solarTimes.sunset);
+
+        var daylightHours = (data.solarTimes.daylightDurationMs / 3600000.0).toFixed(1);
+        var dayLenEl = document.getElementById('stat-daylength');
+        if (dayLenEl) dayLenEl.textContent = daylightHours + 'h';
+
+        if (this.dial) {
+          this.dial.render(data);
+        }
+      };
+
+      AppController.prototype.init = function() {
+        var self = this;
+        var canvas = document.getElementById('circadian-canvas');
+        if (canvas) {
+          this.dial = new DialRenderer(canvas);
+        }
+
+        var citySelect = document.getElementById('city-select');
+        if (citySelect) {
+          citySelect.value = this.currentLocation.id;
+          citySelect.addEventListener('change', function() {
+            var found = CITIES.find(function(c) { return c.id === citySelect.value; });
+            if (found) {
+              self.currentLocation = found;
+              self.customDateStr = self.getLocalDateStringForTimezone(new Date(), self.currentLocation.timezone);
+              var parts = self.getTimePartsForTimezone(new Date(), self.currentLocation.timezone);
+              self.customTimeMinutes = parts.hours * 60 + parts.minutes + parts.seconds / 60;
+              self.updateUI();
+            }
+          });
+        }
+
+        var initialNow = new Date();
+        var initialParts = this.getTimePartsForTimezone(initialNow, this.currentLocation.timezone);
+        this.customDateStr = this.getLocalDateStringForTimezone(initialNow, this.currentLocation.timezone);
+        this.customTimeMinutes = initialParts.hours * 60 + initialParts.minutes + initialParts.seconds / 60;
+        var pad = function(n) { return n < 10 ? '0' + n : '' + n; };
+        var formattedInitialTime = pad(initialParts.hours) + ':' + pad(initialParts.minutes) + ':' + pad(initialParts.seconds);
+
+        var dateInput = document.getElementById('date-picker');
+        if (dateInput) {
+          dateInput.value = this.customDateStr;
+          dateInput.addEventListener('change', function() {
+            if (dateInput.value) {
+              self.customDateStr = dateInput.value;
+              self.isLiveMode = false;
+              self.updateLiveButtonState();
+              self.updateUI();
+            }
+          });
+        }
+
+        var datePill = document.querySelector('.pill-date');
+        if (datePill && dateInput) {
+          datePill.addEventListener('click', function(e) {
+            if (e.target !== dateInput && typeof dateInput.showPicker === 'function') {
+              try { dateInput.showPicker(); } catch(err) { dateInput.focus(); }
+            }
+          });
+        }
+
+        var timeInput = document.getElementById('civil-time-input');
+        if (timeInput) {
+          timeInput.value = formattedInitialTime;
+          timeInput.addEventListener('input', function() {
+            if (timeInput.value) {
+              var sp = timeInput.value.split(':').map(Number);
+              self.customTimeMinutes = (sp[0] || 0) * 60 + (sp[1] || 0) + (sp[2] || 0) / 60;
+              self.isLiveMode = false;
+              self.updateLiveButtonState();
+              self.updateUI();
+            }
+          });
+        }
+
+        var slider = document.getElementById('time-slider');
+        if (slider) {
+          slider.value = String(initialParts.hours * 60 + initialParts.minutes);
+          slider.addEventListener('input', function() {
+            self.customTimeMinutes = Number(slider.value);
+            self.isLiveMode = false;
+            self.updateLiveButtonState();
+            self.updateUI();
+          });
+        }
+
+        var toggleLive = function() {
+          self.isLiveMode = !self.isLiveMode;
+          self.updateLiveButtonState();
+          self.updateUI();
+        };
+
+        var liveBtn = document.getElementById('btn-reset-now');
+        if (liveBtn) liveBtn.addEventListener('click', toggleLive);
+
+        var crownBtn = document.getElementById('btn-crown-live');
+        if (crownBtn) crownBtn.addEventListener('click', toggleLive);
+
+        var gpsBtn = document.getElementById('btn-gps');
+        if (gpsBtn) {
+          gpsBtn.addEventListener('click', function() {
+            if ('geolocation' in navigator) {
+              gpsBtn.textContent = '🛰️ ...';
+              navigator.geolocation.getCurrentPosition(function(pos) {
+                self.currentLocation = {
+                  id: 'custom-gps',
+                  name: 'My GPS',
+                  country: 'Local',
+                  latitude: pos.coords.latitude,
+                  longitude: pos.coords.longitude,
+                  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                  description: 'Local Device Coordinates'
+                };
+                gpsBtn.textContent = '📍 GPS';
+                self.updateUI();
+              }, function() {
+                gpsBtn.textContent = '📍 GPS';
+              });
+            }
+          });
+        }
+
+        var jumpToSolar = function(type) {
+          var activeDate = self.getActiveUtcDate();
+          var solarTimes = self.engine.getSolarTimes(activeDate, self.currentLocation);
+          var targetDate = null;
+          if (type === 'sunrise') targetDate = solarTimes.sunrise;
+          else if (type === 'noon') targetDate = solarTimes.solarNoon;
+          else if (type === 'sunset') targetDate = solarTimes.sunset;
+          else if (type === 'midnight') targetDate = solarTimes.solarMidnight;
+
+          if (targetDate) {
+            var p = self.getTimePartsForTimezone(targetDate, self.currentLocation.timezone);
+            self.customTimeMinutes = p.hours * 60 + p.minutes + p.seconds / 60;
+            self.isLiveMode = false;
+            self.updateLiveButtonState();
+            self.updateUI();
+          }
+        };
+
+        var jSunrise = document.getElementById('btn-jump-sunrise'); if (jSunrise) jSunrise.addEventListener('click', function() { jumpToSolar('sunrise'); });
+        var jNoon = document.getElementById('btn-jump-noon'); if (jNoon) jNoon.addEventListener('click', function() { jumpToSolar('noon'); });
+        var jSunset = document.getElementById('btn-jump-sunset'); if (jSunset) jSunset.addEventListener('click', function() { jumpToSolar('sunset'); });
+        var jMidnight = document.getElementById('btn-jump-midnight'); if (jMidnight) jMidnight.addEventListener('click', function() { jumpToSolar('midnight'); });
+
+        window.addEventListener('keydown', function(e) {
+          if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) return;
+          if (e.key === ' ' || e.code === 'Space') {
+            e.preventDefault();
+            toggleLive();
+          } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            var delta = e.shiftKey ? 30 : 1;
+            self.customTimeMinutes = (self.customTimeMinutes + delta) % 1440;
+            self.isLiveMode = false;
+            self.updateLiveButtonState();
+            self.updateUI();
+          } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            var delta = e.shiftKey ? 30 : 1;
+            self.customTimeMinutes = (self.customTimeMinutes - delta + 1440) % 1440;
+            self.isLiveMode = false;
+            self.updateLiveButtonState();
+            self.updateUI();
+          }
+        });
+
+        this.updateUI();
+        this.timerId = window.setInterval(function() {
+          if (self.isLiveMode) {
+            self.updateUI();
+          }
+        }, 1000);
+      };
+
+      function launch() {
+        try {
+          var app = new AppController();
+          app.init();
+          window.__ourHourAppInstance = app;
+        } catch(err) {
+          console.error('OurHour Boot Error:', err);
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', launch);
+      } else {
+        launch();
+      }
+    })();
+  </script>
+</body>
+</html>

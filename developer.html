@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OurHour — Developer SDK &amp; Mathematical Architecture</title>
+
+  <!-- SEO & Social Meta Tags -->
+  <meta name="description"
+    content="Technical documentation and mathematical formulation for the OurHour solar-normalized circadian time engine." />
+  <meta name="author" content="Francisco Reyne" />
+
+  <link rel="stylesheet" href="./src/styles/main.css" />
+  <link rel="icon" type="image/svg+xml" href="./public/favicon.svg" />
+</head>
+
+<body class="doc-page">
+  <!-- Header -->
+  <header>
+    <div class="container nav-content">
+      <a href="./index.html" class="brand">
+        <img src="./assets/logo.svg" alt="OurHour Logo" class="brand-logo"
+          style="width: 48px; height: 48px; min-width: 48px; min-height: 48px;" />
+        <div>
+          <h1 class="brand-title">OurHour</h1>
+          <span class="brand-tag">Developer &amp; Math Documentation</span>
+        </div>
+      </a>
+
+      <div class="header-controls">
+        <a href="./index.html" class="btn-primary">
+          🕒 Return to Solar Clock
+        </a>
+        <a href="https://github.com/FranciscoReyne/Our-Hour" target="_blank" rel="noopener noreferrer"
+          class="btn-github">
+          ⭐ Star on GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="padding: 40px 0 80px;">
+    <!-- Hero Header -->
+    <div style="margin-bottom: 36px; text-align: center;">
+      <h1
+        style="font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; margin-bottom: 12px; background: linear-gradient(135deg, #FFFFFF 20%, var(--solar-amber) 70%, var(--solar-orange) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        Developer SDK &amp; Mathematical Architecture
+      </h1>
+      <p style="font-size: 1.05rem; color: var(--text-secondary); max-width: 760px; margin: 0 auto; line-height: 1.5;">
+        Integrate the zero-dependency heliocentric time normalizer into TypeScript, JavaScript, Node.js, Web, or Mobile
+        applications.
+      </p>
+    </div>
+
+    <!-- Architecture Visual Diagram -->
+    <div class="glass-card" style="margin-bottom: 36px; text-align: center;">
+      <h2 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 16px; color: var(--text-primary);">
+        Piecewise Normalization Architecture
+      </h2>
+      <img src="./assets/diagram.svg" alt="OurHour Mathematical Transformation Diagram"
+        style="width: 100%; max-width: 960px; border-radius: 12px; border: 1px solid var(--bezel-border);" />
+    </div>
+
+    <!-- SDK Installation & Usage Grid -->
+    <div class="sdk-grid">
+      <!-- Quickstart Code -->
+      <div class="glass-card">
+        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 14px; color: var(--solar-gold);">
+          💻 TypeScript SDK Quickstart
+        </h3>
+        <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 12px;">
+          Install from repository or copy the standalone engine:
+        </p>
+        <pre class="code-block"><code>import { NormalizedTimeEngine } from './src/core';
+
+const engine = new NormalizedTimeEngine();
+
+const location = {
+  latitude: -33.4489,
+  longitude: -70.6693,
+  name: 'Santiago',
+  timezone: 'America/Santiago'
+};
+
+// 1. Convert Real Time -> Virtual Time
+const virtual = engine.toVirtualTime(new Date(), location);
+
+console.log(virtual.virtualTimeStr);  // "08:34:12"
+console.log(virtual.phase);           // "DAY"
+console.log(virtual.dilationFactor);  // 1.18x
+console.log(virtual.solarAltitudeDeg);// 34.2°
+
+// 2. Convert Virtual Time -> Real Civil Date
+const virtualHour = 8.5; // 08:30 Virtual
+const realDate = engine.toRealTime(virtualHour, new Date(), location);
+console.log(realDate.toLocaleTimeString()); // e.g. "09:48 AM"</code></pre>
+      </div>
+
+      <!-- Core Mathematical Formulation -->
+      <div class="glass-card">
+        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 14px; color: #818CF8;">
+          📐 Mathematical Piecewise Formulation
+        </h3>
+
+        <div class="math-stack">
+          <!-- 1. Daylight Interval -->
+          <div class="math-item">
+            <div class="math-item-header">
+              <span style="color: var(--solar-amber);">1. Daylight Interval [t<sub>rise</sub>, t<sub>set</sub>]</span>
+              <span class="math-tag tag-day">06:00v → 18:00v</span>
+            </div>
+            <div class="math-formula-box">
+              v(t) = 6.0 + ((t - t_rise) / Δt_day) × 12.0
+            </div>
+            <div class="math-subtext">
+              <span>Time Dilation Factor:</span>
+              <code>k_day = 12.0 / Δt_day_hours</code>
+            </div>
+          </div>
+
+          <!-- 2. Night Interval -->
+          <div class="math-item">
+            <div class="math-item-header">
+              <span style="color: #818CF8;">2. Night Interval [t<sub>set</sub>, t<sub>next_rise</sub>]</span>
+              <span class="math-tag tag-night">18:00v → 06:00v</span>
+            </div>
+            <div class="math-formula-box night">
+              v(t) = (18.0 + ((t - t_set) / Δt_night) × 12.0) mod 24.0
+            </div>
+            <div class="math-subtext">
+              <span>Time Dilation Factor:</span>
+              <code>k_night = 12.0 / Δt_night_hours</code>
+            </div>
+          </div>
+
+          <!-- 3. Inverse Mapping -->
+          <div class="math-item">
+            <div class="math-item-header">
+              <span style="color: #34D399;">3. Inverse Mapping (v → t)</span>
+              <span class="math-tag tag-inv">Bi-Directional Invertible</span>
+            </div>
+            <div class="math-formula-box inverse">
+              t(v) = t_rise + ((v - 6.0) / 12.0) × Δt_day
+            </div>
+            <div class="math-subtext">
+              <span>Sub-millisecond exactness:</span>
+              <code>Valid for 6.0 ≤ v ≤ 18.0</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Reference Table -->
+    <div class="glass-card" style="margin-bottom: 40px;">
+      <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 20px; color: var(--text-primary);">
+        📚 Core Engine API Reference
+      </h3>
+
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.92rem; text-align: left;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-muted);">
+              <th style="padding: 12px 16px;">Method / Function</th>
+              <th style="padding: 12px 16px;">Input Parameters</th>
+              <th style="padding: 12px 16px;">Return Type</th>
+              <th style="padding: 12px 16px;">Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--border-color);">
+              <td style="padding: 12px 16px; font-family: var(--font-mono); color: var(--solar-gold-light);">
+                toVirtualTime(date, location)</td>
+              <td style="padding: 12px 16px; color: var(--text-secondary);">Date, GeoLocation</td>
+              <td style="padding: 12px 16px; font-family: var(--font-mono); color: #38BDF8;">NormalizedTime</td>
+              <td style="padding: 12px 16px; color: var(--text-secondary);">Transforms real civil timestamp to
+                normalized 24-hour virtual time object.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border-color);">
+              <td style="padding: 12px 16px; font-family: var(--font-mono); color: var(--solar-gold-light);">
+                toRealTime(virtualHour, date, location)</td>
+              <td style="padding: 12px 16px; color: var(--text-secondary);">number (0-24), Date, GeoLocation</td>
+              <td style="padding: 12px 16px; font-family: var(--font-mono); color: #38BDF8;">Date</td>
+              <td style="padding: 12px 16px; color: var(--text-secondary);">Inverse calculation: converts virtual hour
+                on reference date into exact civil Date.</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border-color);">
+              <td style="padding: 12px 16px; font-family: var(--font-mono); color: var(--solar-gold-light);">
+                getSolarTimes(date, location)</td>
+              <td style="padding: 12px 16px; color: var(--text-secondary);">Date, GeoLocation</td>
+              <td style="padding: 12px 16px; font-family: var(--font-mono); color: #38BDF8;">SolarTimes</td>
+              <td style="padding: 12px 16px; color: var(--text-secondary);">Calculates cached solar landmarks (Sunrise,
+                Solar Noon, Sunset, Nadir, Twilights).</td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 16px; font-family: var(--font-mono); color: var(--solar-gold-light);">
+                getSolarPosition(date, lat, lng)</td>
+              <td style="padding: 12px 16px; color: var(--text-secondary);">Date, number, number</td>
+              <td style="padding: 12px 16px; font-family: var(--font-mono); color: #38BDF8;">{ altitudeDeg, azimuthDeg }
+              </td>
+              <td style="padding: 12px 16px; color: var(--text-secondary);">Calculates real-time solar elevation
+                altitude and azimuth in sky.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-content">
+      <div>
+        <strong>OurHour</strong> — Apache 2.0 Licensed Open-Source Project by <strong>Francisco Reyne</strong>.
+      </div>
+      <div>
+        <a href="./index.html" style="color: var(--solar-gold-light); text-decoration: none; margin-right: 16px;">Clock
+          Dashboard</a>
+        <a href="https://github.com/FranciscoReyne/Our-Hour" target="_blank"
+          style="color: var(--text-secondary); text-decoration: none;">GitHub</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

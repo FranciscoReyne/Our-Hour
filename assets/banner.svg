@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#030712"/>
+      <stop offset="50%" stop-color="#0B0F19"/>
+      <stop offset="100%" stop-color="#080D1A"/>
+    </linearGradient>
+
+    <!-- Solar Golden Gradient -->
+    <linearGradient id="solarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="50%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#F97316"/>
+    </linearGradient>
+
+    <!-- Indigo Celestial Gradient -->
+    <linearGradient id="indigoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="50%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+
+    <!-- Emerald Badge Gradient -->
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+
+    <!-- Glow Filters -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="intenseGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="24" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="640" fill="url(#bgGrad)"/>
+
+  <!-- Starfield background points -->
+  <g opacity="0.35">
+    <circle cx="120" cy="80" r="1.5" fill="#E2E8F0"/>
+    <circle cx="340" cy="140" r="1" fill="#E2E8F0"/>
+    <circle cx="210" cy="490" r="1.5" fill="#E2E8F0"/>
+    <circle cx="580" cy="90" r="1" fill="#E2E8F0"/>
+    <circle cx="700" cy="550" r="2" fill="#E2E8F0"/>
+    <circle cx="1150" cy="110" r="1.5" fill="#E2E8F0"/>
+    <circle cx="1210" cy="480" r="1" fill="#E2E8F0"/>
+    <circle cx="850" cy="180" r="1.5" fill="#E2E8F0"/>
+  </g>
+
+  <!-- Left Side: Hero Branding & Typography -->
+  <g transform="translate(100, 150)">
+    <!-- Pill Badge -->
+    <rect x="0" y="0" width="310" height="36" rx="18" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="18" cy="18" r="5" fill="#F59E0B" filter="url(#softGlow)"/>
+    <text x="32" y="23" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="700" fill="#F8FAFC" letter-spacing="1.5">OPEN-SOURCE TIME ENGINE</text>
+
+    <!-- Main Title -->
+    <text x="0" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="64" font-weight="900" fill="#F8FAFC" letter-spacing="-1">OurHour</text>
+    
+    <!-- Subtitle / Tagline -->
+    <text x="0" y="145" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="600" fill="url(#solarGrad)">Solar-Normalized Circadian Time</text>
+    
+    <text x="0" y="185" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="400" fill="#94A3B8" width="500">
+      Synchronize human productivity with Earth's natural light cycle.
+    </text>
+    <text x="0" y="210" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="400" fill="#94A3B8">
+      Always 24 virtual hours • 06:00 is sunrise • 18:00 is sunset.
+    </text>
+
+    <!-- Feature Badges -->
+    <g transform="translate(0, 260)">
+      <!-- Badge 1: Zero Deps -->
+      <rect x="0" y="0" width="130" height="34" rx="8" fill="#111827" stroke="#374151" stroke-width="1"/>
+      <text x="65" y="22" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#F59E0B">⚡ Zero Runtime Deps</text>
+
+      <!-- Badge 2: Reversible -->
+      <rect x="142" y="0" width="150" height="34" rx="8" fill="#111827" stroke="#374151" stroke-width="1"/>
+      <text x="217" y="22" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#60A5FA">🔄 Bi-Directional (v↔t)</text>
+
+      <!-- Badge 3: TypeScript -->
+      <rect x="304" y="0" width="120" height="34" rx="8" fill="#111827" stroke="#374151" stroke-width="1"/>
+      <text x="364" y="22" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#34D399">📘 100% TypeScript</text>
+    </g>
+  </g>
+
+  <!-- Right Side: Glowing Celestial Dial Visual -->
+  <g transform="translate(930, 320)">
+    <!-- Ambient back glow -->
+    <circle cx="0" cy="0" r="220" fill="#0B132B" opacity="0.6" filter="url(#intenseGlow)"/>
+
+    <!-- Outer Track -->
+    <circle cx="0" cy="0" r="190" fill="none" stroke="#1E293B" stroke-width="2" stroke-dasharray="6 8"/>
+
+    <!-- Daylight Arc (Top: 06:00 to 18:00) -->
+    <path d="M -160 0 A 160 160 0 0 1 160 0" fill="none" stroke="url(#solarGrad)" stroke-width="12" stroke-linecap="round" filter="url(#softGlow)"/>
+
+    <!-- Night Arc (Bottom: 18:00 to 06:00) -->
+    <path d="M 160 0 A 160 160 0 0 1 -160 0" fill="none" stroke="url(#indigoGrad)" stroke-width="12" stroke-linecap="round" filter="url(#softGlow)"/>
+
+    <!-- Dial Axis & Landmarks -->
+    <!-- Solar Noon (Top: 12:00) -->
+    <line x1="0" y1="-140" x2="0" y2="-170" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+    <text x="0" y="-185" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#FBBF24">12:00 NOON</text>
+
+    <!-- Solar Nadir (Bottom: 00:00) -->
+    <line x1="0" y1="140" x2="0" y2="170" stroke="#818CF8" stroke-width="4" stroke-linecap="round"/>
+    <text x="0" y="200" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#818CF8">00:00 MIDNIGHT</text>
+
+    <!-- Sunrise (Left: 06:00) -->
+    <line x1="-140" y1="0" x2="-170" y2="0" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+    <text x="-185" y="5" text-anchor="end" font-family="sans-serif" font-size="13" font-weight="800" fill="#F59E0B">06:00 RISE</text>
+
+    <!-- Sunset (Right: 18:00) -->
+    <line x1="140" y1="0" x2="170" y2="0" stroke="#F97316" stroke-width="4" stroke-linecap="round"/>
+    <text x="185" y="5" text-anchor="start" font-family="sans-serif" font-size="13" font-weight="800" fill="#F97316">18:00 SET</text>
+
+    <!-- Center Glowing Sun Hub -->
+    <circle cx="0" cy="0" r="45" fill="#0F172A" stroke="#334155" stroke-width="2"/>
+    <circle cx="0" cy="0" r="28" fill="url(#solarGrad)" filter="url(#softGlow)"/>
+    <circle cx="0" cy="0" r="18" fill="#FFFBEB"/>
+
+    <!-- Dynamic Indicator Needle (Pointing at 09:30 Virtual) -->
+    <line x1="0" y1="0" x2="-80" y2="-80" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" filter="url(#softGlow)"/>
+    <circle cx="-80" cy="-80" r="6" fill="#FBBF24"/>
+  </g>
+</svg>

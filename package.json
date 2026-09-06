@@ -1,0 +1,37 @@
+{
+  "name": "our-hour",
+  "version": "1.0.0",
+  "description": "Solar-Normalized Circadian Time Engine & Interactive Productivity Suite",
+  "type": "module",
+  "main": "./dist/core/index.js",
+  "types": "./dist/core/index.d.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "circadian-rhythm",
+    "solar-time",
+    "normalized-time",
+    "astronomy",
+    "productivity",
+    "time-dilation",
+    "time-blocking",
+    "calendar",
+    "suncalc"
+  ],
+  "author": "Francisco Reyne",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FranciscoReyne/Our-Hour.git"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vitest": "^1.6.0"
+  }
+}
