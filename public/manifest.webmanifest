@@ -1,0 +1,75 @@
+{
+  "id": "our-hour-circadian-watch",
+  "name": "OurHour — Circadian Digital Wristwatch",
+  "short_name": "OurHour",
+  "description": "Solar-Normalized Circadian Time Engine & Interactive Digital Wristwatch",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait",
+  "background_color": "#030712",
+  "theme_color": "#0B0F19",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": [
+    "lifestyle",
+    "utilities",
+    "productivity",
+    "health"
+  ],
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Circadian Clock",
+      "url": "./index.html",
+      "description": "Open live solar-normalized watchface",
+      "icons": [
+        {
+          "src": "./icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Developer Docs",
+      "url": "./developer.html",
+      "description": "Mathematical Architecture & Engine API",
+      "icons": [
+        {
+          "src": "./icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

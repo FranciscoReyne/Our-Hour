@@ -11,12 +11,14 @@
 *Synchronize human productivity with Earth's natural light cycle.*
 
 [![CI Workflow](https://github.com/FranciscoReyne/Our-Hour/actions/workflows/ci.yml/badge.svg)](https://github.com/FranciscoReyne/Our-Hour/actions)
+[![Build Android APK](https://github.com/FranciscoReyne/Our-Hour/actions/workflows/build-apk.yml/badge.svg)](https://github.com/FranciscoReyne/Our-Hour/actions/workflows/build-apk.yml)
+[![PWA Ready](https://img.shields.io/badge/PWA-Ready-success.svg)](https://franciscoreyne.github.io/Our-Hour)
+[![Android APK](https://img.shields.io/badge/Android%20APK-Download-orange.svg)](https://github.com/FranciscoReyne/Our-Hour/releases/latest/download/OurHour.apk)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.4+-blue.svg)](https://www.typescriptlang.org/)
 [![Zero Dependencies](https://img.shields.io/badge/Runtime%20Dependencies-0-emerald.svg)](#features)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[**Live Interactive Demo**](https://franciscoreyne.github.io/Our-Hour) • [**Developer Docs**](developer.html) • [**SDK Quickstart**](#typescript--javascript-sdk) • [**Mathematical Model**](#mathematical-piecewise-model) • [**Calendar Sync**](#productivity--calendar-export)
+[**Live Web App (PWA)**](https://franciscoreyne.github.io/Our-Hour) • [**📥 Descargar APK Android**](https://github.com/FranciscoReyne/Our-Hour/releases/latest/download/OurHour.apk) • [**Developer Docs**](developer.html) • [**SDK Quickstart**](#typescript--javascript-sdk) • [**Mathematical Model**](#mathematical-piecewise-model)
 
 </div>
 
@@ -224,6 +226,22 @@ Open [http://localhost:3000](http://localhost:3000) to view the live celestial H
 
 ---
 
+## 📱 Smartphone Installation & APK (Sincronización Automática)
+
+OurHour utiliza una arquitectura de **código único** sincronizada directamente con [GitHub Pages](https://franciscoreyne.github.io/Our-Hour/): cualquier cambio que subas a este repositorio se refleja inmediatamente en los teléfonos de los usuarios sin necesidad de desarrollar ni mantener proyectos en paralelo.
+
+### 1. Progressive Web App (PWA) — iOS, Android y Desktop
+* **iPhone / iPad (Safari):** Abre [https://franciscoreyne.github.io/Our-Hour/](https://franciscoreyne.github.io/Our-Hour/), toca el botón **Compartir** (icono ⎙ / ⇧) y selecciona **"Añadir a pantalla de inicio"**.
+* **Android (Chrome / Edge):** Abre el enlace y pulsa en el aviso emergente **"Instalar aplicación"** o en el menú `⋮` > **"Instalar aplicación"**.
+* **Ventajas:** Funciona a pantalla completa como una app nativa, no consume espacio extra, opera 100% offline y se actualiza sola al abrirla.
+
+### 2. Instalador Nativo `.apk` para Android
+* Puedes descargar el instalador directo de Android desde: [**Descargar OurHour.apk**](https://github.com/FranciscoReyne/Our-Hour/releases/latest/download/OurHour.apk).
+* El APK conecta de forma fluida con el motor desplegado y cachea los datos para permitir navegación y uso offline continuo.
+* **Compilación Automática:** El workflow de GitHub Actions [`.github/workflows/build-apk.yml`](.github/workflows/build-apk.yml) compila y firma automáticamente el APK en cada versión.
+
+---
+
 ## 🗺️ Roadmap
 
 - [x] High-precision zero-dependency astronomical solar ephemeris
@@ -231,6 +249,8 @@ Open [http://localhost:3000](http://localhost:3000) to view the live celestial H
 - [x] Dual-clock live canvas dial & 24h scrubber simulation
 - [x] Virtual time-blocking scheduler with `.ics` calendar sync
 - [x] Polar summer/winter extreme latitude handler
+- [x] PWA Support (Manifest, Offline Service Worker & Mobile Launchers)
+- [x] Android Native APK Wrapper & Automated Build Pipeline
 - [ ] Mobile Widget (iOS / Android / watchOS)
 - [ ] Raycast & Alfred Extension for instant virtual time lookup
 - [ ] AI-Powered Circadian Energy Optimization Planner
@@ -258,4 +278,4 @@ Distributed under the **Apache License 2.0**. See [`LICENSE`](LICENSE) for more 
 <div align="center">
   <sub>Built with ☀️ by <strong>Francisco Reyne</strong> &amp; OurHour Open Source Contributors.</sub>
 </div>
->>>>>>> 5f16708 (feat: initial release of Our-Hour solar-normalized circadian time engine)
+

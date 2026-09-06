@@ -9,6 +9,16 @@
   <meta name="description" content="OurHour is a minimalist heliocentric smartwatch engine that normalizes human daily schedules into 24 invariant virtual hours: 06:00 is always sunrise, 18:00 is always sunset." />
   <meta name="author" content="Francisco Reyne" />
 
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <meta name="theme-color" content="#0B0F19" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="OurHour" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./public/icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./public/icons/icon-192.png" />
+
   <!-- Open Graph / Twitter Cards -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="OurHour — Circadian Digital Wristwatch" />
@@ -28,6 +38,9 @@
     </button>
     <button id="btn-gps" class="watch-pusher pusher-bottom-left" title="Click to Sync Device GPS">
       📍 GPS
+    </button>
+    <button id="btn-install-pusher" class="watch-pusher pusher-bottom-right" title="App Móvil & APK">
+      📱 APP
     </button>
 
     <!-- The Titanium Watch Chassis -->
@@ -118,9 +131,77 @@
       </div>
     </div>
 
-    <!-- External Clean Link to Documentation -->
+    <!-- External Clean Link to Documentation & App Installation -->
     <div class="doc-link-wrap">
       <a href="./developer.html" class="doc-link">📖 Developer SDK &amp; Mathematical Architecture →</a>
+      <button id="btn-open-install-modal" class="btn-app-install" title="Instalar OurHour en Smartphone / Descargar APK">
+        📲 Instalar App / Descargar APK
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal for PWA & APK Installation -->
+  <div id="install-modal" class="app-modal-backdrop" aria-hidden="true" role="dialog">
+    <div class="app-modal-card">
+      <div class="app-modal-header">
+        <div class="app-modal-title-group">
+          <img src="./public/icons/icon-192.png" alt="OurHour Icon" class="app-modal-icon" />
+          <div>
+            <div class="app-modal-title">OurHour Mobile</div>
+            <div class="app-modal-subtitle">Sincronización Total en Smartphones</div>
+          </div>
+        </div>
+        <button id="btn-close-modal" class="btn-modal-close" aria-label="Cerrar modal">&times;</button>
+      </div>
+
+      <div class="app-modal-body">
+        <div class="sync-guarantee-note">
+          <span>⚡</span>
+          <span><strong>100% Sincronizado:</strong> Lo que actualices en GitHub Pages se sincroniza automáticamente en tu smartphone.</span>
+        </div>
+
+        <!-- Option 1: PWA Instant Install -->
+        <div class="install-option-card highlight">
+          <div class="option-header">
+            <div class="option-title">
+              <span>📲 App Progresiva (PWA)</span>
+            </div>
+            <span class="badge-pill badge-pwa">Recomendado</span>
+          </div>
+          <p class="option-desc">
+            Instálala al instante desde el navegador en iOS, Android o PC. Se ejecuta a pantalla completa y funciona offline.
+          </p>
+          <button id="btn-trigger-pwa-install" class="btn-action-primary">
+            ✨ Instalar en Pantalla de Inicio
+          </button>
+          <div class="platform-guide-list">
+            <div class="guide-item">
+              <span>🍎</span>
+              <div><strong>iPhone / iPad (Safari):</strong> Toca el botón <em>Compartir</em> (icono ⎙ / ⇧) y selecciona <em>"Añadir a pantalla de inicio"</em>.</div>
+            </div>
+            <div class="guide-item">
+              <span>🤖</span>
+              <div><strong>Android (Chrome/Edge):</strong> Toca el botón de arriba o el menú (⋮) y selecciona <em>"Instalar aplicación"</em>.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option 2: APK Installer -->
+        <div class="install-option-card">
+          <div class="option-header">
+            <div class="option-title">
+              <span>🤖 Instalador APK (Android)</span>
+            </div>
+            <span class="badge-pill badge-apk">Nativo</span>
+          </div>
+          <p class="option-desc">
+            Descarga el archivo <code>.apk</code> directo para instalar en cualquier smartphone Android. Sincroniza en tiempo real con GitHub Pages.
+          </p>
+          <a id="btn-download-apk" href="https://github.com/FranciscoReyne/Our-Hour/releases/latest/download/OurHour.apk" class="btn-action-secondary" target="_blank" rel="noopener noreferrer">
+            📥 Descargar OurHour.apk
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -797,11 +878,84 @@
         }, 1000);
       };
 
+      // Service Worker & PWA Install Manager
+      var deferredPrompt = null;
+      window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        var pwaBtn = document.getElementById('btn-trigger-pwa-install');
+        if (pwaBtn) {
+          pwaBtn.textContent = '✨ Instalar Ahora en este Dispositivo';
+        }
+      });
+
+      function setupAppInstallModal() {
+        var modal = document.getElementById('install-modal');
+        var openBtn1 = document.getElementById('btn-open-install-modal');
+        var openBtn2 = document.getElementById('btn-install-pusher');
+        var closeBtn = document.getElementById('btn-close-modal');
+        var pwaTriggerBtn = document.getElementById('btn-trigger-pwa-install');
+
+        function openModal() {
+          if (modal) {
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+          }
+        }
+
+        function closeModal() {
+          if (modal) {
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+          }
+        }
+
+        if (openBtn1) openBtn1.addEventListener('click', openModal);
+        if (openBtn2) openBtn2.addEventListener('click', openModal);
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+        if (modal) {
+          modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+          });
+        }
+
+        if (pwaTriggerBtn) {
+          pwaTriggerBtn.addEventListener('click', async function() {
+            if (deferredPrompt) {
+              deferredPrompt.prompt();
+              var choice = await deferredPrompt.userChoice;
+              if (choice.outcome === 'accepted') {
+                console.log('PWA installed successfully');
+                closeModal();
+              }
+              deferredPrompt = null;
+            } else {
+              alert('Para instalar en iPhone/iPad: pulsa "Compartir" y luego "Añadir a pantalla de inicio". En Chrome/Edge: usa el menú ⋮ > "Instalar aplicación".');
+            }
+          });
+        }
+      }
+
+      // Register Progressive Web App Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('./sw.js')
+            .then(function(reg) {
+              console.log('[SW] Service Worker activo con alcance:', reg.scope);
+            })
+            .catch(function(err) {
+              console.warn('[SW] Error registrando Service Worker:', err);
+            });
+        });
+      }
+
       function launch() {
         try {
           var app = new AppController();
           app.init();
           window.__ourHourAppInstance = app;
+          setupAppInstallModal();
         } catch(err) {
           console.error('OurHour Boot Error:', err);
         }

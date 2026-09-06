@@ -11,6 +11,16 @@
     content="Technical documentation and mathematical formulation for the OurHour solar-normalized circadian time engine." />
   <meta name="author" content="Francisco Reyne" />
 
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <meta name="theme-color" content="#0B0F19" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="OurHour" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./public/icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./public/icons/icon-192.png" />
+
   <link rel="stylesheet" href="./src/styles/main.css" />
   <link rel="icon" type="image/svg+xml" href="./public/favicon.svg" />
 </head>
@@ -222,6 +232,20 @@ console.log(realDate.toLocaleTimeString()); // e.g. "09:48 AM"</code></pre>
       </div>
     </div>
   </footer>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./sw.js')
+          .then(function(reg) {
+            console.log('[SW] Service Worker activo en docs');
+          })
+          .catch(function(err) {
+            console.warn('[SW] Error en docs:', err);
+          });
+      });
+    }
+  </script>
 </body>
 
 </html>
