@@ -18,7 +18,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.4+-blue.svg)](https://www.typescriptlang.org/)
 [![Zero Dependencies](https://img.shields.io/badge/Runtime%20Dependencies-0-emerald.svg)](#features)
 
-[**Live Web App (PWA)**](https://franciscoreyne.github.io/Our-Hour) • [**📥 Descargar APK Android**](https://github.com/FranciscoReyne/Our-Hour/releases/latest/download/OurHour.apk) • [**Developer Docs**](developer.html) • [**SDK Quickstart**](#typescript--javascript-sdk) • [**Mathematical Model**](#mathematical-piecewise-model)
+[**Live Web App (PWA)**](https://franciscoreyne.github.io/Our-Hour) • [**📥 Download Android APK**](https://github.com/FranciscoReyne/Our-Hour/releases/latest/download/OurHour.apk) • [**Developer Docs**](developer.html) • [**SDK Quickstart**](#typescript--javascript-sdk) • [**Mathematical Model**](#mathematical-piecewise-model)
 
 </div>
 
@@ -226,19 +226,19 @@ Open [http://localhost:3000](http://localhost:3000) to view the live celestial H
 
 ---
 
-## 📱 Smartphone Installation & APK (Sincronización Automática)
+## 📱 Smartphone Installation & APK (Automatic Synchronization)
 
-OurHour utiliza una arquitectura de **código único** sincronizada directamente con [GitHub Pages](https://franciscoreyne.github.io/Our-Hour/): cualquier cambio que subas a este repositorio se refleja inmediatamente en los teléfonos de los usuarios sin necesidad de desarrollar ni mantener proyectos en paralelo.
+OurHour uses a **single-codebase architecture** synchronized directly with [GitHub Pages](https://franciscoreyne.github.io/Our-Hour/): any updates pushed to this repository are instantly reflected on users' smartphones without needing to maintain parallel development pipelines.
 
-### 1. Progressive Web App (PWA) — iOS, Android y Desktop
-* **iPhone / iPad (Safari):** Abre [https://franciscoreyne.github.io/Our-Hour/](https://franciscoreyne.github.io/Our-Hour/), toca el botón **Compartir** (icono ⎙ / ⇧) y selecciona **"Añadir a pantalla de inicio"**.
-* **Android (Chrome / Edge):** Abre el enlace y pulsa en el aviso emergente **"Instalar aplicación"** o en el menú `⋮` > **"Instalar aplicación"**.
-* **Ventajas:** Funciona a pantalla completa como una app nativa, no consume espacio extra, opera 100% offline y se actualiza sola al abrirla.
+### 1. Progressive Web App (PWA) — iOS, Android & Desktop
+* **iPhone / iPad (Safari):** Open [https://franciscoreyne.github.io/Our-Hour/](https://franciscoreyne.github.io/Our-Hour/), tap the **Share** button (icon ⇧) and select **"Add to Home Screen"**.
+* **Android (Chrome / Edge):** Open the link and tap **"Install app"** in the banner or from the browser menu `⋮` > **"Install app"**.
+* **Benefits:** Fullscreen native-app experience, zero extra storage overhead, 100% offline functionality, and seamless automatic updates upon launching.
 
-### 2. Instalador Nativo `.apk` para Android
-* Puedes descargar el instalador directo de Android desde: [**Descargar OurHour.apk**](https://github.com/FranciscoReyne/Our-Hour/releases/latest/download/OurHour.apk).
-* El APK conecta de forma fluida con el motor desplegado y cachea los datos para permitir navegación y uso offline continuo.
-* **Compilación Automática:** El workflow de GitHub Actions [`.github/workflows/build-apk.yml`](.github/workflows/build-apk.yml) compila y firma automáticamente el APK en cada versión.
+### 2. Native `.apk` Installer for Android
+* Download the standalone Android package directly: [**Download OurHour.apk**](https://github.com/FranciscoReyne/Our-Hour/releases/latest/download/OurHour.apk).
+* The APK seamlessly connects with the deployed engine and caches data to allow continuous offline navigation and usage.
+* **Automated CI/CD Build:** The GitHub Actions workflow [`.github/workflows/build-apk.yml`](.github/workflows/build-apk.yml) automatically compiles and signs the APK on every release.
 
 ---
 

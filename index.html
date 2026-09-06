@@ -32,9 +32,9 @@
 <body>
   <!-- Top App Installation & PWA Action Bar -->
   <header class="top-install-banner">
-    <button id="btn-open-install-modal" class="btn-app-install-top" title="Instalar OurHour en Smartphone / Descargar APK">
+    <button id="btn-open-install-modal" class="btn-app-install-top" title="Install OurHour on Smartphone / Download APK">
       <span class="install-pulse-dot"></span>
-      <span class="btn-install-text">📲 Instalar App / Descargar APK</span>
+      <span class="btn-install-text">📲 Install App / Download APK</span>
       <span class="badge-mini">PWA &amp; Android</span>
     </button>
   </header>
@@ -48,7 +48,7 @@
     <button id="btn-gps" class="watch-pusher pusher-bottom-left" title="Click to Sync Device GPS">
       📍 GPS
     </button>
-    <button id="btn-install-pusher" class="watch-pusher pusher-bottom-right" title="App Móvil & APK">
+    <button id="btn-install-pusher" class="watch-pusher pusher-bottom-right" title="Mobile App &amp; APK">
       📱 APP
     </button>
 
@@ -154,10 +154,10 @@
           <img src="./public/icons/icon-192.png" alt="OurHour Icon" class="app-modal-icon" />
           <div>
             <div class="app-modal-title">OurHour Mobile</div>
-            <div class="app-modal-subtitle">Instala OurHour en tu smartphone</div>
+            <div class="app-modal-subtitle">Install OurHour on your device</div>
           </div>
         </div>
-        <button id="btn-close-modal" class="btn-modal-close" aria-label="Cerrar modal">&times;</button>
+        <button id="btn-close-modal" class="btn-modal-close" aria-label="Close modal">&times;</button>
       </div>
 
       <div class="app-modal-body">
@@ -165,24 +165,24 @@
         <div class="install-option-card highlight">
           <div class="option-header">
             <div class="option-title">
-              <span>📲 App Progresiva (PWA)</span>
+              <span>📲 Progressive Web App (PWA)</span>
             </div>
-            <span class="badge-pill badge-pwa">Recomendado</span>
+            <span class="badge-pill badge-pwa">Recommended</span>
           </div>
           <p class="option-desc">
-            Instálala al instante desde el navegador en iOS, Android o PC. Se ejecuta a pantalla completa y funciona offline.
+            Install instantly from your browser on iOS, Android, or Desktop. Runs in fullscreen mode and works 100% offline.
           </p>
           <button id="btn-trigger-pwa-install" class="btn-action-primary">
-            ✨ Instalar en Pantalla de Inicio
+            ✨ Add to Home Screen
           </button>
           <div class="platform-guide-list">
             <div class="guide-item">
               <span>🍎</span>
-              <div><strong>iPhone / iPad (Safari):</strong> Toca el botón <em>Compartir</em> (icono ⎙ / ⇧) y selecciona <em>"Añadir a pantalla de inicio"</em>.</div>
+              <div><strong>iPhone / iPad (Safari):</strong> Tap the <em>Share</em> button (icon ⇧) and select <em>"Add to Home Screen"</em>.</div>
             </div>
             <div class="guide-item">
               <span>🤖</span>
-              <div><strong>Android (Chrome/Edge):</strong> Toca el botón de arriba o el menú (⋮) y selecciona <em>"Instalar aplicación"</em>.</div>
+              <div><strong>Android (Chrome/Edge):</strong> Tap the button above or open menu (⋮) and select <em>"Install app"</em>.</div>
             </div>
           </div>
         </div>
@@ -191,15 +191,15 @@
         <div class="install-option-card">
           <div class="option-header">
             <div class="option-title">
-              <span>🤖 Instalador APK (Android)</span>
+              <span>🤖 APK Installer (Android)</span>
             </div>
-            <span class="badge-pill badge-apk">Nativo</span>
+            <span class="badge-pill badge-apk">Native</span>
           </div>
           <p class="option-desc">
-            Descarga el archivo <code>.apk</code> directo para instalar en cualquier smartphone Android.
+            Download the standalone <code>.apk</code> package to install natively on any Android smartphone.
           </p>
           <a id="btn-download-apk" href="https://github.com/FranciscoReyne/Our-Hour/releases/latest/download/OurHour.apk" class="btn-action-secondary" target="_blank" rel="noopener noreferrer">
-            📥 Descargar OurHour.apk
+            📥 Download OurHour.apk
           </a>
         </div>
       </div>
@@ -911,7 +911,7 @@
         deferredPrompt = e;
         var pwaBtn = document.getElementById('btn-trigger-pwa-install');
         if (pwaBtn) {
-          pwaBtn.textContent = '✨ Instalar Ahora en este Dispositivo';
+          pwaBtn.textContent = '✨ Install on this Device';
         }
       });
 
@@ -960,7 +960,7 @@
               }
               deferredPrompt = null;
             } else {
-              alert('Para instalar en iPhone/iPad: pulsa "Compartir" y luego "Añadir a pantalla de inicio". En Chrome/Edge: usa el menú ⋮ > "Instalar aplicación".');
+              alert('To install on iPhone/iPad: Tap "Share" (icon ⇧) and select "Add to Home Screen". In Chrome/Edge: Use menu ⋮ > "Install app".');
             }
           });
         }
@@ -971,10 +971,10 @@
         window.addEventListener('load', function() {
           navigator.serviceWorker.register('./sw.js')
             .then(function(reg) {
-              console.log('[SW] Service Worker activo con alcance:', reg.scope);
+              console.log('[SW] Service Worker active with scope:', reg.scope);
             })
             .catch(function(err) {
-              console.warn('[SW] Error registrando Service Worker:', err);
+              console.warn('[SW] Error registering Service Worker:', err);
             });
         });
       }
