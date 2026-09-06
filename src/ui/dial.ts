@@ -45,32 +45,32 @@ export class CircadianDial {
 
     const isDay = data.phase === 'DAY' || data.phase === 'POLAR_DAY';
 
-    // 1. Ambient Background Glow
+    // 1. Ambient Background Glow (Subtle Porcelain Halo)
     const bgGrad = ctx.createRadialGradient(cx, cy, 60, cx, cy, outerRadius * 1.05);
     if (isDay) {
-      bgGrad.addColorStop(0, 'rgba(245, 158, 11, 0.12)');
-      bgGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      bgGrad.addColorStop(0, 'rgba(217, 119, 6, 0.08)');
+      bgGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
     } else {
-      bgGrad.addColorStop(0, 'rgba(99, 102, 241, 0.12)');
-      bgGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      bgGrad.addColorStop(0, 'rgba(79, 70, 229, 0.08)');
+      bgGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
     }
     ctx.fillStyle = bgGrad;
     ctx.beginPath();
     ctx.arc(cx, cy, outerRadius * 1.05, 0, Math.PI * 2);
     ctx.fill();
 
-    // 2. Base Bezel Dark Groove
+    // 2. Base Bezel Satin Ceramic Groove
     ctx.beginPath();
     ctx.arc(cx, cy, (outerRadius + innerRadius) / 2, 0, Math.PI * 2);
-    ctx.strokeStyle = '#111622';
+    ctx.strokeStyle = '#EEF2F6';
     ctx.lineWidth = outerRadius - innerRadius;
     ctx.stroke();
 
     // 3. Virtual Daylight Arc (06:00 to 18:00 = Top Half: Math.PI to 0)
     const dayGrad = ctx.createLinearGradient(cx - outerRadius, cy, cx + outerRadius, cy);
     dayGrad.addColorStop(0, '#F59E0B');
-    dayGrad.addColorStop(0.5, '#FBBF24');
-    dayGrad.addColorStop(1, '#F97316');
+    dayGrad.addColorStop(0.5, '#D97706');
+    dayGrad.addColorStop(1, '#EA580C');
 
     ctx.beginPath();
     ctx.arc(cx, cy, (outerRadius + innerRadius) / 2, Math.PI, 0, false);
@@ -81,9 +81,9 @@ export class CircadianDial {
 
     // 4. Virtual Night Arc (18:00 to 06:00 = Bottom Half: 0 to Math.PI)
     const nightGrad = ctx.createLinearGradient(cx + outerRadius, cy, cx - outerRadius, cy);
-    nightGrad.addColorStop(0, '#6366F1');
-    nightGrad.addColorStop(0.5, '#8B5CF6');
-    nightGrad.addColorStop(1, '#38BDF8');
+    nightGrad.addColorStop(0, '#4F46E5');
+    nightGrad.addColorStop(0.5, '#7C3AED');
+    nightGrad.addColorStop(1, '#0284C7');
 
     ctx.beginPath();
     ctx.arc(cx, cy, (outerRadius + innerRadius) / 2, 0, Math.PI, false);
@@ -92,7 +92,7 @@ export class CircadianDial {
     ctx.lineCap = 'round';
     ctx.stroke();
 
-    // 5. Cardinal Hour Ticks (06:00, 12:00, 18:00, 00:00)
+    // 5. Cardinal Hour Ticks (06:00, 12:00, 18:00, 00:00) in Crisp Charcoal
     for (let h = 0; h < 24; h += 3) {
       const angle = ((h - 18) / 24) * Math.PI * 2;
       const isMajor = h % 6 === 0;
@@ -107,7 +107,7 @@ export class CircadianDial {
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
-      ctx.strokeStyle = isMajor ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
+      ctx.strokeStyle = isMajor ? 'rgba(15, 23, 42, 0.7)' : 'rgba(15, 23, 42, 0.22)';
       ctx.lineWidth = isMajor ? 2 : 1;
       ctx.stroke();
     }
@@ -120,10 +120,10 @@ export class CircadianDial {
 
     // Glowing Halo
     ctx.beginPath();
-    ctx.arc(orbX, orbY, 10, 0, Math.PI * 2);
-    ctx.fillStyle = isDay ? '#FDE68A' : '#C7D2FE';
-    ctx.shadowColor = isDay ? '#F59E0B' : '#6366F1';
-    ctx.shadowBlur = 16;
+    ctx.arc(orbX, orbY, 11, 0, Math.PI * 2);
+    ctx.fillStyle = isDay ? '#D97706' : '#4F46E5';
+    ctx.shadowColor = isDay ? 'rgba(217, 119, 6, 0.4)' : 'rgba(79, 70, 229, 0.4)';
+    ctx.shadowBlur = 12;
     ctx.fill();
     ctx.shadowBlur = 0;
 

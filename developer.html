@@ -12,10 +12,10 @@
   <meta name="author" content="Francisco Reyne" />
 
   <!-- PWA & Mobile Web App Meta Tags -->
-  <meta name="theme-color" content="#0B0F19" />
+  <meta name="theme-color" content="#FAFAFC" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="OurHour" />
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" href="./public/icons/apple-touch-icon.png" />
@@ -27,11 +27,11 @@
 
 <body class="doc-page">
   <!-- Header -->
-  <header>
+  <header class="doc-header">
     <div class="container nav-content">
       <a href="./index.html" class="brand">
         <img src="./assets/logo.svg" alt="OurHour Logo" class="brand-logo"
-          style="width: 48px; height: 48px; min-width: 48px; min-height: 48px;" />
+          style="width: 44px; height: 44px; min-width: 44px; min-height: 44px;" />
         <div>
           <h1 class="brand-title">OurHour</h1>
           <span class="brand-tag">Developer &amp; Math Documentation</span>
@@ -54,7 +54,7 @@
     <!-- Hero Header -->
     <div style="margin-bottom: 36px; text-align: center;">
       <h1
-        style="font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; margin-bottom: 12px; background: linear-gradient(135deg, #FFFFFF 20%, var(--solar-amber) 70%, var(--solar-orange) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        style="font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; margin-bottom: 12px; background: linear-gradient(135deg, #0F172A 30%, var(--solar-amber) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
         Developer SDK &amp; Mathematical Architecture
       </h1>
       <p style="font-size: 1.05rem; color: var(--text-secondary); max-width: 760px; margin: 0 auto; line-height: 1.5;">
@@ -64,25 +64,25 @@
     </div>
 
     <!-- Architecture Visual Diagram -->
-    <div class="glass-card" style="margin-bottom: 36px; text-align: center;">
+    <div class="doc-card" style="margin-bottom: 36px; text-align: center;">
       <h2 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 16px; color: var(--text-primary);">
         Piecewise Normalization Architecture
       </h2>
       <img src="./assets/diagram.svg" alt="OurHour Mathematical Transformation Diagram"
-        style="width: 100%; max-width: 960px; border-radius: 12px; border: 1px solid var(--bezel-border);" />
+        style="width: 100%; max-width: 960px; border-radius: 12px; border: 1px solid var(--border-subtle);" />
     </div>
 
     <!-- SDK Installation & Usage Grid -->
-    <div class="sdk-grid">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 32px;">
       <!-- Quickstart Code -->
-      <div class="glass-card">
-        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 14px; color: var(--solar-gold);">
+      <div class="doc-card">
+        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 14px; color: var(--solar-amber);">
           💻 TypeScript SDK Quickstart
         </h3>
         <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 12px;">
           Install from repository or copy the standalone engine:
         </p>
-        <pre class="code-block"><code>import { NormalizedTimeEngine } from './src/core';
+        <pre class="code-box"><code>import { NormalizedTimeEngine } from './src/core';
 
 const engine = new NormalizedTimeEngine();
 
@@ -108,54 +108,54 @@ console.log(realDate.toLocaleTimeString()); // e.g. "09:48 AM"</code></pre>
       </div>
 
       <!-- Core Mathematical Formulation -->
-      <div class="glass-card">
-        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 14px; color: #818CF8;">
+      <div class="doc-card">
+        <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 14px; color: var(--night-indigo);">
           📐 Mathematical Piecewise Formulation
         </h3>
 
-        <div class="math-stack">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
           <!-- 1. Daylight Interval -->
-          <div class="math-item">
-            <div class="math-item-header">
-              <span style="color: var(--solar-amber);">1. Daylight Interval [t<sub>rise</sub>, t<sub>set</sub>]</span>
-              <span class="math-tag tag-day">06:00v → 18:00v</span>
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <strong style="color: var(--solar-amber); font-size: 0.88rem;">1. Daylight Interval [t<sub>rise</sub>, t<sub>set</sub>]</strong>
+              <span style="font-size: 0.72rem; font-weight: 700; background: rgba(217,119,6,0.1); color: var(--solar-amber); padding: 2px 8px; border-radius: 6px;">06:00v → 18:00v</span>
             </div>
             <div class="math-formula-box">
               v(t) = 6.0 + ((t - t_rise) / Δt_day) × 12.0
             </div>
-            <div class="math-subtext">
+            <div style="font-size: 0.78rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
               <span>Time Dilation Factor:</span>
-              <code>k_day = 12.0 / Δt_day_hours</code>
+              <code style="font-family: var(--font-digits); font-weight: 700; color: #0F172A;">k_day = 12.0 / Δt_day_hours</code>
             </div>
           </div>
 
           <!-- 2. Night Interval -->
-          <div class="math-item">
-            <div class="math-item-header">
-              <span style="color: #818CF8;">2. Night Interval [t<sub>set</sub>, t<sub>next_rise</sub>]</span>
-              <span class="math-tag tag-night">18:00v → 06:00v</span>
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <strong style="color: var(--night-indigo); font-size: 0.88rem;">2. Night Interval [t<sub>set</sub>, t<sub>next_rise</sub>]</strong>
+              <span style="font-size: 0.72rem; font-weight: 700; background: rgba(79,70,229,0.1); color: var(--night-indigo); padding: 2px 8px; border-radius: 6px;">18:00v → 06:00v</span>
             </div>
             <div class="math-formula-box night">
               v(t) = (18.0 + ((t - t_set) / Δt_night) × 12.0) mod 24.0
             </div>
-            <div class="math-subtext">
+            <div style="font-size: 0.78rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
               <span>Time Dilation Factor:</span>
-              <code>k_night = 12.0 / Δt_night_hours</code>
+              <code style="font-family: var(--font-digits); font-weight: 700; color: #0F172A;">k_night = 12.0 / Δt_night_hours</code>
             </div>
           </div>
 
           <!-- 3. Inverse Mapping -->
-          <div class="math-item">
-            <div class="math-item-header">
-              <span style="color: #34D399;">3. Inverse Mapping (v → t)</span>
-              <span class="math-tag tag-inv">Bi-Directional Invertible</span>
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <strong style="color: var(--accent-green); font-size: 0.88rem;">3. Inverse Mapping (v → t)</strong>
+              <span style="font-size: 0.72rem; font-weight: 700; background: rgba(5,150,105,0.1); color: var(--accent-green); padding: 2px 8px; border-radius: 6px;">Invertible</span>
             </div>
             <div class="math-formula-box inverse">
               t(v) = t_rise + ((v - 6.0) / 12.0) × Δt_day
             </div>
-            <div class="math-subtext">
-              <span>Sub-millisecond exactness:</span>
-              <code>Valid for 6.0 ≤ v ≤ 18.0</code>
+            <div style="font-size: 0.78rem; color: var(--text-secondary); display: flex; justify-content: space-between;">
+              <span>Sub-millisecond precision:</span>
+              <code style="font-family: var(--font-digits); font-weight: 700; color: #0F172A;">6.0 ≤ v ≤ 18.0</code>
             </div>
           </div>
         </div>
@@ -163,7 +163,7 @@ console.log(realDate.toLocaleTimeString()); // e.g. "09:48 AM"</code></pre>
     </div>
 
     <!-- API Reference Table -->
-    <div class="glass-card" style="margin-bottom: 40px;">
+    <div class="doc-card" style="margin-bottom: 40px;">
       <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 20px; color: var(--text-primary);">
         📚 Core Engine API Reference
       </h3>
@@ -171,7 +171,7 @@ console.log(realDate.toLocaleTimeString()); // e.g. "09:48 AM"</code></pre>
       <div style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse; font-size: 0.92rem; text-align: left;">
           <thead>
-            <tr style="border-bottom: 2px solid var(--border-color); color: var(--text-muted);">
+            <tr style="border-bottom: 2px solid var(--border-subtle); color: var(--text-muted);">
               <th style="padding: 12px 16px;">Method / Function</th>
               <th style="padding: 12px 16px;">Input Parameters</th>
               <th style="padding: 12px 16px;">Return Type</th>
@@ -179,36 +179,35 @@ console.log(realDate.toLocaleTimeString()); // e.g. "09:48 AM"</code></pre>
             </tr>
           </thead>
           <tbody>
-            <tr style="border-bottom: 1px solid var(--border-color);">
-              <td style="padding: 12px 16px; font-family: var(--font-mono); color: var(--solar-gold-light);">
+            <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <td style="padding: 12px 16px; font-family: var(--font-digits); font-weight: 700; color: var(--solar-amber);">
                 toVirtualTime(date, location)</td>
               <td style="padding: 12px 16px; color: var(--text-secondary);">Date, GeoLocation</td>
-              <td style="padding: 12px 16px; font-family: var(--font-mono); color: #38BDF8;">NormalizedTime</td>
+              <td style="padding: 12px 16px; font-family: var(--font-digits); font-weight: 700; color: var(--night-cyan);">NormalizedTime</td>
               <td style="padding: 12px 16px; color: var(--text-secondary);">Transforms real civil timestamp to
                 normalized 24-hour virtual time object.</td>
             </tr>
-            <tr style="border-bottom: 1px solid var(--border-color);">
-              <td style="padding: 12px 16px; font-family: var(--font-mono); color: var(--solar-gold-light);">
+            <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <td style="padding: 12px 16px; font-family: var(--font-digits); font-weight: 700; color: var(--solar-amber);">
                 toRealTime(virtualHour, date, location)</td>
               <td style="padding: 12px 16px; color: var(--text-secondary);">number (0-24), Date, GeoLocation</td>
-              <td style="padding: 12px 16px; font-family: var(--font-mono); color: #38BDF8;">Date</td>
+              <td style="padding: 12px 16px; font-family: var(--font-digits); font-weight: 700; color: var(--night-cyan);">Date</td>
               <td style="padding: 12px 16px; color: var(--text-secondary);">Inverse calculation: converts virtual hour
                 on reference date into exact civil Date.</td>
             </tr>
-            <tr style="border-bottom: 1px solid var(--border-color);">
-              <td style="padding: 12px 16px; font-family: var(--font-mono); color: var(--solar-gold-light);">
+            <tr style="border-bottom: 1px solid var(--border-subtle);">
+              <td style="padding: 12px 16px; font-family: var(--font-digits); font-weight: 700; color: var(--solar-amber);">
                 getSolarTimes(date, location)</td>
               <td style="padding: 12px 16px; color: var(--text-secondary);">Date, GeoLocation</td>
-              <td style="padding: 12px 16px; font-family: var(--font-mono); color: #38BDF8;">SolarTimes</td>
-              <td style="padding: 12px 16px; color: var(--text-secondary);">Calculates cached solar landmarks (Sunrise,
-                Solar Noon, Sunset, Nadir, Twilights).</td>
+              <td style="padding: 12px 16px; font-family: var(--font-digits); font-weight: 700; color: var(--night-cyan);">SolarTimes</td>
+              <td style="padding: 12px 16px; color: var(--text-secondary);">Computes exact sunrise, solar noon, sunset,
+                twilights, and nadir.</td>
             </tr>
             <tr>
-              <td style="padding: 12px 16px; font-family: var(--font-mono); color: var(--solar-gold-light);">
+              <td style="padding: 12px 16px; font-family: var(--font-digits); font-weight: 700; color: var(--solar-amber);">
                 getSolarPosition(date, lat, lng)</td>
               <td style="padding: 12px 16px; color: var(--text-secondary);">Date, number, number</td>
-              <td style="padding: 12px 16px; font-family: var(--font-mono); color: #38BDF8;">{ altitudeDeg, azimuthDeg }
-              </td>
+              <td style="padding: 12px 16px; font-family: var(--font-digits); font-weight: 700; color: var(--night-cyan);">{ altitudeDeg, azimuthDeg }</td>
               <td style="padding: 12px 16px; color: var(--text-secondary);">Calculates real-time solar elevation
                 altitude and azimuth in sky.</td>
             </tr>

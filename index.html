@@ -10,10 +10,10 @@
   <meta name="author" content="Francisco Reyne" />
 
   <!-- PWA & Mobile Web App Meta Tags -->
-  <meta name="theme-color" content="#0B0F19" />
+  <meta name="theme-color" content="#FAFAFC" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="OurHour" />
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" href="./public/icons/apple-touch-icon.png" />
@@ -473,32 +473,32 @@
 
         var isDay = data.phase === 'DAY' || data.phase === 'POLAR_DAY';
 
-        // Ambient background glow
+        // Ambient background glow (Porcelain halo)
         var bgGrad = ctx.createRadialGradient(cx, cy, 60, cx, cy, outerRadius * 1.05);
         if (isDay) {
-          bgGrad.addColorStop(0, 'rgba(245, 158, 11, 0.14)');
-          bgGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          bgGrad.addColorStop(0, 'rgba(217, 119, 6, 0.08)');
+          bgGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
         } else {
-          bgGrad.addColorStop(0, 'rgba(99, 102, 241, 0.14)');
-          bgGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+          bgGrad.addColorStop(0, 'rgba(79, 70, 229, 0.08)');
+          bgGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
         }
         ctx.fillStyle = bgGrad;
         ctx.beginPath();
         ctx.arc(cx, cy, outerRadius * 1.05, 0, Math.PI * 2);
         ctx.fill();
 
-        // Groove
+        // Satin Ceramic Groove
         ctx.beginPath();
         ctx.arc(cx, cy, (outerRadius + innerRadius) / 2, 0, Math.PI * 2);
-        ctx.strokeStyle = '#111622';
+        ctx.strokeStyle = '#EEF2F6';
         ctx.lineWidth = outerRadius - innerRadius;
         ctx.stroke();
 
         // Daytime Arc (06:00 to 18:00 = Top Half: PI to 0)
         var dayGrad = ctx.createLinearGradient(cx - outerRadius, cy, cx + outerRadius, cy);
         dayGrad.addColorStop(0, '#F59E0B');
-        dayGrad.addColorStop(0.5, '#FBBF24');
-        dayGrad.addColorStop(1, '#F97316');
+        dayGrad.addColorStop(0.5, '#D97706');
+        dayGrad.addColorStop(1, '#EA580C');
         ctx.beginPath();
         ctx.arc(cx, cy, (outerRadius + innerRadius) / 2, Math.PI, 0, false);
         ctx.strokeStyle = dayGrad;
@@ -508,9 +508,9 @@
 
         // Nighttime Arc (18:00 to 06:00 = Bottom Half: 0 to PI)
         var nightGrad = ctx.createLinearGradient(cx + outerRadius, cy, cx - outerRadius, cy);
-        nightGrad.addColorStop(0, '#6366F1');
-        nightGrad.addColorStop(0.5, '#8B5CF6');
-        nightGrad.addColorStop(1, '#38BDF8');
+        nightGrad.addColorStop(0, '#4F46E5');
+        nightGrad.addColorStop(0.5, '#7C3AED');
+        nightGrad.addColorStop(1, '#0284C7');
         ctx.beginPath();
         ctx.arc(cx, cy, (outerRadius + innerRadius) / 2, 0, Math.PI, false);
         ctx.strokeStyle = nightGrad;
@@ -518,7 +518,7 @@
         ctx.lineCap = 'round';
         ctx.stroke();
 
-        // Ticks
+        // Cardinal Hour Ticks in Charcoal
         for (var h = 0; h < 24; h += 3) {
           var angle = ((h - 18) / 24) * Math.PI * 2;
           var isMajor = h % 6 === 0;
@@ -531,7 +531,7 @@
           ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
-          ctx.strokeStyle = isMajor ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.15)';
+          ctx.strokeStyle = isMajor ? 'rgba(15, 23, 42, 0.7)' : 'rgba(15, 23, 42, 0.22)';
           ctx.lineWidth = isMajor ? 2 : 1;
           ctx.stroke();
         }
@@ -543,10 +543,10 @@
         var orbY = cy + Math.sin(currentAngle) * needleR;
 
         ctx.beginPath();
-        ctx.arc(orbX, orbY, 10, 0, Math.PI * 2);
-        ctx.fillStyle = isDay ? '#FDE68A' : '#C7D2FE';
-        ctx.shadowColor = isDay ? '#F59E0B' : '#6366F1';
-        ctx.shadowBlur = 16;
+        ctx.arc(orbX, orbY, 11, 0, Math.PI * 2);
+        ctx.fillStyle = isDay ? '#D97706' : '#4F46E5';
+        ctx.shadowColor = isDay ? 'rgba(217, 119, 6, 0.4)' : 'rgba(79, 70, 229, 0.4)';
+        ctx.shadowBlur = 12;
         ctx.fill();
         ctx.shadowBlur = 0;
 
