@@ -825,6 +825,61 @@ footer {
 /* ==========================================================================
    PWA & Mobile App Installation Modal & Buttons
    ========================================================================== */
+.top-install-banner {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 440px;
+  margin-bottom: 22px;
+  z-index: 20;
+}
+
+.btn-app-install-top {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(99, 102, 241, 0.16) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #F8FAFC;
+  padding: 10px 20px;
+  border-radius: 28px;
+  font-family: var(--font-ui);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), inset 0 0 14px rgba(245, 158, 11, 0.1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-app-install-top:hover {
+  border-color: var(--solar-gold);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px var(--solar-glow);
+}
+
+.install-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 10px #10B981;
+  animation: pulse-led 1.8s infinite;
+}
+
+.badge-mini {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--solar-amber);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  font-size: 0.66rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .pusher-bottom-right {
   bottom: 48px;
   right: -8px;
